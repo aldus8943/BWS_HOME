@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="theme-color" content="#000000" />
+  <title>The Chase · Jin Kim Portfolio</title>
+  <meta name="description" content="The Chase, an AI cinematic short by Jin Kim (BW/S SS27, AI Cinematic Storytelling)." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,100..900&family=Tinos:ital@0;1&display=swap" />
+  <link rel="stylesheet" href="./cinema.css" />
+</head>
+<body>
+  <!-- 05 · AI Cinematic Storytelling. The film THE_CHASE.mp4 (FINAL, 2516 × 1440 HEVC 10-bit) re-encoded for the web
+       (H.264 / AAC copied unchanged; 1920 and 1280 sizes in media/). Black page; the picture's edges are feathered into
+       the black; a thin framed play bar sits below it. Sound and music: made by the team, cleared for this use. -->
+  <header class="bar">
+    <a class="back" href="../../index.html"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M12.5 4 6.5 10l6 6" /></svg><span>MAIN</span></a>
+    <p class="bar-title">FEATURED · 05 <b>THE CHASE</b></p>
+    <p class="bar-mark">AI CINEMATIC STORYTELLING</p>
+  </header>
+
+  <main class="stage">
+    <figure class="screen">
+      <canvas class="glow" width="96" height="55" aria-hidden="true"></canvas>
+      <video class="film" playsinline preload="metadata" poster="./media/THE_CHASE_poster.webp"
+        aria-label="The Chase, an AI cinematic short (5 minutes 5 seconds)">
+        <source src="./media/THE_CHASE_1920.mp4" type="video/mp4" media="(min-width: 1000px)" />
+        <source src="./media/THE_CHASE_1280.mp4" type="video/mp4" />
+      </video>
+      <span class="screen-edge" aria-hidden="true"></span>
+      <button class="big-play" type="button" aria-label="Play">PLAY</button>
+      <!-- opening card: shown when the page opens (and again at the end); WATCH THE FILM starts the film. The title is
+           the "THE CHASE" lettering lifted from the H05 section image (media/THE_CHASE_title.webp). -->
+      <div class="intro">
+        <p class="intro-kicker">AN UNOFFICIAL TRIBUTE TO QUENTIN TARANTINO'S CINEMA</p>
+        <h1 class="intro-title"><img src="./media/THE_CHASE_title.webp" width="1218" height="310" alt="The Chase" /></h1>
+        <p class="intro-genre">A GRAPHIC-NOVEL ACTION THRILLER</p>
+        <p class="intro-tagline">Every frame tells a story. Every second fuels the chase.</p>
+        <button class="intro-watch" type="button">WATCH THE FILM<svg viewBox="0 0 20 20" aria-hidden="true"><path d="M4 16 16 4M7.5 4H16v8.5" /></svg></button>
+        <p class="intro-note">An independent AI filmmaking team project. Not affiliated with or endorsed by Quentin Tarantino.</p>
+      </div>
+    </figure>
+
+    <div class="controls" aria-label="Film controls">
+      <button class="ctl ctl-play" type="button" aria-label="Play">PLAY</button>
+      <div class="track" role="slider" tabindex="0" aria-label="Seek" aria-valuemin="0" aria-valuemax="305" aria-valuenow="0" aria-valuetext="0:00 of 5:05">
+        <span class="track-fill" aria-hidden="true"></span>
+        <span class="track-knob" aria-hidden="true"></span>
+      </div>
+      <span class="ctl-time" aria-hidden="true"><span class="t-now">00:00</span><span class="t-sep"> / </span><span class="t-dur">05:05</span></span>
+      <button class="ctl ctl-sound" type="button">MUTE</button>
+      <button class="ctl ctl-full" type="button" aria-label="Full screen">FULL</button>
+    </div>
+  </main>
+
+  <script src="./cinema.js"></script>
+</body>
+</html>

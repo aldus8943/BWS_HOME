@@ -1,0 +1,65 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#2a2230" />
+    <title>Garden of Whimsy — A Journey in Bloom · BW/S SS27</title>
+    <script type="module" crossorigin src="./assets/index-DBnVynew.js"></script>
+    <link rel="modulepreload" crossorigin href="./assets/three-BW246XVu.js">
+    <link rel="stylesheet" crossorigin href="./assets/index-efuDpOnA.css">
+  </head>
+  <body>
+    <main id="app" data-state="INTRO">
+      <canvas id="stage" aria-label="Garden of Whimsy interactive experience"></canvas>
+      <video id="intro-video" muted loop playsinline aria-hidden="true"></video>
+      <div class="vignette" aria-hidden="true"></div>
+      <div class="grain" aria-hidden="true"></div>
+
+      <header id="intro-ui" class="intro">
+        <p class="eyebrow">BW/S · SS27 · ROMANTIC DETAILS</p>
+        <h1>GARDEN<br />OF WHIMSY</h1>
+        <p class="subtitle">A Journey in Bloom</p>
+        <button id="start" class="text-button" disabled>
+          <span class="label">PREPARING THE GARDEN</span><span class="arrow" aria-hidden="true">→</span>
+        </button>
+        <p class="intro-hint">SCROLL TO EXPLORE <span>·</span> DRAG TO LOOK AROUND</p>
+      </header>
+
+      <nav id="journey-ui" class="journey-ui" aria-label="Journey controls">
+        <button id="pause" class="quiet-button">PAUSE</button>
+        <button id="return-intro" class="quiet-button">RETURN TO INTRO</button>
+      </nav>
+
+      <div id="progress" class="progress" aria-hidden="true">
+        <div class="progress-track"><div class="progress-fill"></div><div class="progress-mark"></div></div>
+      </div>
+
+      <p id="instructions" class="instructions">SCROLL TO EXPLORE <span>·</span> DRAG TO LOOK AROUND</p>
+      <section id="garden-title" class="garden-title" aria-live="polite">
+        <p class="garden-number">GARDEN 01</p>
+        <p class="garden-name">The Awakening</p>
+        <p class="garden-mood">Wonder · anticipation</p>
+      </section>
+
+      <p id="invitation" class="invitation"><span class="spark" aria-hidden="true">✦</span> Click to Discover</p>
+
+      <section id="reveal-ui" class="reveal-ui" aria-live="polite">
+        <p class="eyebrow">A HIDDEN TREASURE</p>
+        <p class="reveal-title">A glimpse of what blooms next</p>
+        <p class="reveal-note">SS27 jewelry piece — placeholder</p>
+        <button id="continue" class="text-button"><span class="label">CONTINUE JOURNEY</span><span class="arrow" aria-hidden="true">→</span></button>
+      </section>
+
+      <section id="ending-ui" class="ending-ui" aria-live="polite">
+        <p class="eyebrow">BW/S · SS27 · ROMANTIC DETAILS</p>
+        <p class="ending-title">The garden keeps blooming</p>
+        <p class="ending-note">Six gardens, one journey. Scroll back to wander again.</p>
+        <button id="ending-return" class="text-button"><span class="label">RETURN TO INTRO</span><span class="arrow" aria-hidden="true">→</span></button>
+      </section>
+
+      <pre id="debug" class="debug" hidden></pre>
+      <div id="curtain" aria-hidden="true"></div>
+    </main>
+  </body>
+</html>

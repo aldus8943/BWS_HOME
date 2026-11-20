@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="theme-color" content="#220c1c" />
+  <title>Games · Jin Kim Portfolio</title>
+  <meta name="description" content="Two BW/S SS27 jewelry arcade games by Jin Kim, playable side by side: Catch the Shine and Break the Vault." />
+  <link rel="stylesheet" href="./games.css" />
+</head>
+<body>
+  <!-- 06 · Games. Both games run live, side by side, each in its own frame (no extra click to enter): catch-the-shine/
+       (FINAL 2026-11-19 build) and break-the-vault/ (dist of the FINAL 2026-11-19 package), both unchanged.
+       games.js sizes the frames as large as the window allows; the text goes only into the space that is left. -->
+  <header class="bar">
+    <a class="back" href="../../index.html"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M12.5 4 6.5 10l6 6" /></svg><span>MAIN</span></a>
+    <p class="bar-title" aria-hidden="true">FEATURED · 06 <b>GAMES</b></p>
+    <p class="bar-mark">BW/S · SS27</p>
+  </header>
+
+  <main class="stage">
+    <div class="intro">
+      <p class="intro-kicker">FEATURED · 06</p>
+      <h1>GAMES</h1>
+      <p class="intro-text">Two jewelry arcade games for BW/S SS27 Eclectic Maximalism. Choose a game to play.</p>
+    </div>
+
+    <ul class="games" role="list">
+      <li class="game">
+        <iframe src="./catch-the-shine/index.html" title="Catch the Shine — playable game" allow="autoplay; fullscreen"></iframe>
+      </li>
+      <li class="game">
+        <iframe src="./break-the-vault/index.html" title="Break the Vault — playable game" allow="autoplay; fullscreen"></iframe>
+      </li>
+    </ul>
+  </main>
+
+  <script src="./games.js"></script>
+</body>
+</html>

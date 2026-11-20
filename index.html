@@ -1,0 +1,195 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#ffffff" />
+  <title>BW/S SS27 — Final Submission</title>
+  <meta name="description" content="BW/S SS27 Romantic Details: six works in one portfolio." />
+  <link rel="stylesheet" href="./assets/home.css" />
+</head>
+<body>
+  <!--
+    MASTER HOME. Order: hero (work 01), then one full-width card per work (work 02 = Garden of Whimsy, directly
+    below the hero). A pending work has class "is-pending", no link, and a tonal placeholder instead of an image.
+    To connect a work when its archive arrives: set the <a href>, remove "is-pending", replace the placeholder
+    <div class="media-placeholder"> with <img class="media" src="./assets/images/…" alt="…">.
+  -->
+  <header class="site-header">
+    <button class="menu-toggle" type="button" aria-expanded="false" aria-controls="works-menu" aria-label="Open the works menu">
+      <span class="menu-lines" aria-hidden="true"><span></span><span></span></span>
+    </button>
+    <!-- FOR BW/S: will open the profile and technical-spec page. That page is not built yet, so the button has no href
+         for now (add href="…" here when the page exists; it then becomes a normal link). Light version over the hero,
+         dark version over the cards (html.bring-on-dark, assets/home.js). -->
+    <a class="bring-link" aria-disabled="true" aria-label="For BW/S: strategic contribution">
+      <span class="bring-main" aria-hidden="true">FOR BW/S<svg class="bring-arrow" viewBox="0 0 20 20"><path d="M4 16 16 4M7.5 4H16v8.5" /></svg></span>
+      <span class="bring-sub" aria-hidden="true">STRATEGIC CONTRIBUTION</span>
+    </a>
+  </header>
+
+  <!-- WORKS MENU: a panel 30% of the screen wide that slides in from the left, opened by the two-line icon in the
+       top bar (assets/home.js). The company name and the six works rise in one after another (--i = order). -->
+  <div class="menu-scrim" data-close-menu hidden></div>
+  <div class="menu" id="works-menu" role="dialog" aria-modal="true" aria-label="Works" hidden>
+    <button class="menu-close" type="button" data-close-menu aria-label="Close the works menu">
+      <svg viewBox="0 0 40 40" aria-hidden="true"><path d="M2 2 38 38M38 2 2 38" /></svg>
+    </button>
+    <div class="menu-body">
+      <p class="menu-logo" style="--i:0">BW/S</p>
+      <p class="menu-sub" style="--i:1">SS27 · Romantic Details</p>
+      <ol class="menu-list">
+        <li style="--i:2"><a class="menu-item" href="./modules/interactive-deck/index.html">Interactive Slide Deck</a></li>
+        <li style="--i:3"><a class="menu-item" href="./modules/ai-design/index.html">AI Product Design</a></li>
+        <li style="--i:4"><a class="menu-item" href="./modules/blender-modeling/index.html">Interactive Modeling</a></li>
+        <li style="--i:5"><a class="menu-item" href="./modules/garden-of-whimsy/index.html">Immersive Experience</a></li>
+        <li style="--i:6"><a class="menu-item" href="./modules/cinematic-storytelling/index.html">AI Cinematic Storytelling</a></li>
+        <li style="--i:7"><a class="menu-item" href="./modules/games/index.html">Games</a></li>
+        <li style="--i:8"><span class="menu-item">Strategic Contribution</span></li>
+      </ol>
+    </div>
+  </div>
+
+  <main>
+    <h1 class="visually-hidden">BW/S SS27 Romantic Details — Final Submission</h1>
+
+    <!-- 01 · HERO: Interactive Slide Deck, opens modules/interactive-deck (FINAL v25 package, unchanged). Section image H01 carries its own typography, so the
+         HTML copy below stays for screen readers only (.card--artwork). -->
+    <section class="hero" aria-label="Featured work">
+      <!-- Layered hero: a silent 4 s looping film of the scene (4k_v2.mp4 at 5.0–7.0 s, steadied on the chest, played forward then back so the loop has no
+           jump) fills the screen; H01's typography, extracted as transparent layers, is pinned to the corners at its
+           H01 size, so no screen shape crops it. The poster is the film's first frame. -->
+      <a class="card card--hero card--artwork card--layered" href="./modules/interactive-deck/index.html">
+        <video class="media" autoplay muted loop playsinline preload="auto" poster="./assets/images/H01_loop_v4_poster.webp"
+          role="img" aria-label="Garden of Whimsy, Spring Summer 2027, The Bloom Edit: a woman with a flower crown and floral earrings in a sunlit meadow. Romantic Details: where nature meets imagination. Featured 01, Interactive Slide Deck, BW/S SS27 Romantic Details.">
+          <source src="./assets/images/H01_loop_v4_2560.mp4" type="video/mp4" media="(min-width: 1600px)" />
+          <source src="./assets/images/H01_loop_v4_1920.mp4" type="video/mp4" />
+        </video>
+        <img class="hero-type hero-type--badge" src="./assets/images/H01_type_badge.webp" width="350" height="350" alt="" aria-hidden="true" />
+        <img class="hero-type hero-type--right" src="./assets/images/H01_type_right.webp" width="1265" height="820" alt="" aria-hidden="true" />
+        <img class="hero-type hero-type--left" src="./assets/images/H01_type_left.webp" width="1380" height="295" alt="" aria-hidden="true" />
+        <div class="card-copy">
+          <p class="card-kicker">FEATURED · 01</p>
+          <h2 class="card-title">INTERACTIVE SLIDE DECK</h2>
+          <p class="card-text">BW/S SS27 · Romantic Details</p>
+          <span class="card-cta">OPEN THE DECK</span>
+        </div>
+      </a>
+    </section>
+
+    <ul class="cards" id="works" role="list" aria-label="All works">
+      <!-- 02 · AI Product Design: opens modules/ai-design (AI DESIGN and SPEC DESIGN strips). Section image H04 carries its
+           own typography, so the HTML copy below stays for screen readers only (.card--artwork). -->
+      <li>
+        <a class="card card--artwork" href="./modules/ai-design/index.html">
+          <img class="media" src="./assets/images/H04_2000x894.webp"
+            srcset="./assets/images/H04_2000x894.webp 2000w, ./assets/images/H04_3840x1716.webp 3840w" sizes="100vw"
+            width="3840" height="1716" loading="lazy" decoding="async"
+            alt="Beyond the Imagined, AI-driven jewelry design SS27: a design-studio wall pinned with AI jewelry line sheets and rose, gold and pearl colour swatches. From concept to creation: where imagination meets innovation. Featured 02, AI Product Design, Jin Kim Portfolio." />
+          <div class="card-copy">
+            <p class="card-kicker">02</p>
+            <h3 class="card-title">AI PRODUCT DESIGN</h3>
+            <p class="card-text">Jin Kim Portfolio</p>
+            <span class="card-cta">VIEW THE DESIGNS</span>
+          </div>
+        </a>
+      </li>
+
+      <!-- 03 · Blender Interactive Modeling: opens modules/blender-modeling (build of the FINAL package, unchanged).
+           Section image H03_minimal carries its own typography, so the HTML copy below stays for screen readers only. -->
+      <li>
+        <a class="card card--artwork" href="./modules/blender-modeling/index.html">
+          <img class="media" src="./assets/images/H03_minimal_2000x894.webp"
+            srcset="./assets/images/H03_minimal_2000x894.webp 2000w, ./assets/images/H03_minimal_3840x1716.webp 3840w" sizes="100vw"
+            width="3840" height="1716" loading="lazy" decoding="async"
+            alt="The Art of Form, Sculptural Essentials SS27: a sculpted, molten-looking gold cuff with an organic opening, on a softly lit taupe surface. One form, four finishes: where sculpture meets interaction. Featured 03, Interactive Modeling, BW/S SS27 Romantic Details." />
+          <div class="card-copy">
+            <p class="card-kicker">03</p>
+            <h3 class="card-title">BLENDER INTERACTIVE MODELING</h3>
+            <span class="card-cta">EXPLORE THE CUFF</span>
+          </div>
+        </a>
+      </li>
+
+      <!-- 02 · Garden of Whimsy (connected). Section image H02 carries its own typography, so the HTML copy below
+           stays for screen readers only (.card--artwork). -->
+      <li>
+        <a class="card card--artwork" href="./modules/garden-of-whimsy/index.html">
+          <img class="media" src="./assets/images/H02_2000x894.webp"
+            srcset="./assets/images/H02_2000x894.webp 2000w, ./assets/images/H02_3840x1716.webp 3840w" sizes="100vw"
+            width="3840" height="1716"
+            alt="Garden of Whimsy: a pink origami paper boat on dark mirrored water among floating pink flowers. Six gardens, endless wonder: a voyage through living blooms. Featured 04, Immersive Experience, BW/S SS27 Romantic Details." />
+          <div class="card-copy">
+            <p class="card-kicker">04</p>
+            <h3 class="card-title">GARDEN OF WHIMSY</h3>
+            <p class="card-text">Immersive Interactive Jewelry Garden Journey</p>
+            <span class="card-cta">ENTER THE GARDEN</span>
+          </div>
+        </a>
+      </li>
+
+      <!-- 05 · AI Cinematic Storytelling: opens modules/cinematic-storytelling (The Chase, web encode of the FINAL film).
+           Section image H05 carries its own typography, so the HTML copy below stays for screen readers only. -->
+      <li>
+        <a class="card card--artwork" href="./modules/cinematic-storytelling/index.html">
+          <img class="media" src="./assets/images/H05_2000x894.webp"
+            srcset="./assets/images/H05_2000x894.webp 2000w, ./assets/images/H05_3840x1716.webp 3840w" sizes="100vw"
+            width="3840" height="1716" loading="lazy" decoding="async"
+            alt="The Chase, a graphic-novel action thriller: a man in a yellow coat and sunglasses crouches on the roof of a moving train above a desert canyon, firing a revolver, while a man in a dark suit runs along the train behind him. Where ink, shadow, and motion collide. An unofficial creative tribute to Quentin Tarantino's cinema; an independent AI filmmaking team project, not affiliated with or endorsed by Quentin Tarantino. Featured 05, AI Cinematic Storytelling: AI film, graphic novel animation." />
+          <div class="card-copy">
+            <p class="card-kicker">05</p>
+            <h3 class="card-title">MOVIE</h3>
+            <span class="card-cta">WATCH THE FILM</span>
+          </div>
+        </a>
+      </li>
+
+      <!-- 06 · Games: opens modules/games (Catch the Shine and Break the Vault side by side). Section image H06 carries its
+           own typography, so the HTML copy below stays for screen readers only (.card--artwork). -->
+      <li>
+        <a class="card card--artwork" href="./modules/games/index.html">
+          <img class="media" src="./assets/images/H06_2000x894.webp"
+            srcset="./assets/images/H06_2000x894.webp 2000w, ./assets/images/H06_3840x1716.webp 3840w" sizes="100vw"
+            width="3840" height="1716" loading="lazy" decoding="async"
+            alt="Sparkle &amp; Chaos, interactive jewelry games SS27: two game screens on a dark garnet background, Break the Vault (level 04: break, reveal, collect) and Shatter Storm (level 05, a jewel brick-breaker in play). Five levels, endless sparkle: catch the shine, break the vault, unleash the storm. Featured 06, Games, BW/S SS27 Eclectic Maximalism." />
+          <div class="card-copy">
+            <p class="card-kicker">06</p>
+            <h3 class="card-title">GAMES</h3>
+            <span class="card-cta">PLAY THE GAMES</span>
+          </div>
+        </a>
+      </li>
+      <!-- 07 · Strategic Contribution (no link). Section image H07 carries its own typography, so the HTML copy below
+           stays for screen readers only (.card--artwork). -->
+      <li>
+        <a class="card card--artwork is-pending" aria-disabled="true">
+          <img class="media" src="./assets/images/H07_2000x894.webp"
+            srcset="./assets/images/H07_2000x894.webp 2000w, ./assets/images/H07_3840x1716.webp 3840w" sizes="100vw"
+            width="3840" height="1716" loading="lazy" decoding="async"
+            alt="Where design meets manufacturing, my contribution to Beth Ward Studios: a studio board tracing one pair of floral earrings from collection concept, AI visual exploration and a 3D CAD wireframe model to the technical specification, material and finish, prototype and development, an on-model portrait and the final product. Design leadership, hands-on development expertise, and AI-driven visual thinking, connecting brand direction to product reality and new digital experiences. Featured 07, Strategic Contribution: design, development, digital experience." />
+          <div class="card-copy">
+            <p class="card-kicker">07</p>
+            <h3 class="card-title">STRATEGIC CONTRIBUTION</h3>
+            <p class="card-text">Design · Development · Digital Experience</p>
+          </div>
+        </a>
+      </li>
+    </ul>
+  </main>
+
+  <footer class="site-footer">
+    <p class="logotype logotype--small">BW/S</p>
+    <ol class="footer-index">
+      <li><a href="./modules/interactive-deck/index.html"><span>01</span> Interactive Slide Deck</a></li>
+      <li><a href="./modules/ai-design/index.html"><span>02</span> AI Product Design</a></li>
+      <li><a href="./modules/blender-modeling/index.html"><span>03</span> Interactive Modeling</a></li>
+      <li><a href="./modules/garden-of-whimsy/index.html"><span>04</span> Immersive Experience</a></li>
+      <li><a href="./modules/cinematic-storytelling/index.html"><span>05</span> AI Cinematic Storytelling</a></li>
+      <li><a href="./modules/games/index.html"><span>06</span> Games</a></li>
+      <li><span>07</span> Strategic Contribution</li>
+    </ol>
+    <p class="footer-note">SS27 · ROMANTIC DETAILS · FINAL SUBMISSION</p>
+  </footer>
+  <script src="./assets/home.js"></script>
+</body>
+</html>

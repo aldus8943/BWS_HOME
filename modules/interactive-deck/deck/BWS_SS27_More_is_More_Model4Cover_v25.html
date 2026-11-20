@@ -1,0 +1,912 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>SS27 — v25 (Garden cover: of hairlines reinforced)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,100..900&family=Bodoni+Moda:ital,opsz,wght@0,6..96,400..900;1,6..96,400..900&display=swap" rel="stylesheet">
+<style>
+:root{
+  --ink:#0b0a0c; --ink-2:#151317; --ivory:#f3ede4; --mute:#a69f96;
+  --gold:#c9a24a; --gold-2:#e8cf8a; --amethyst:#6b3fa0; --amethyst-2:#a77bd6;
+  --cobalt:#2340d6; --scarlet:#e23a2a; --amber:#f2a03a; --fuchsia:#e0218a; --emerald:#0f6b4a; --pearl:#ece6da;
+  --serif:"Bodoni Moda", "Didot", serif;
+  --sans:"Archivo", "Helvetica Neue", Arial, sans-serif;
+  --ease:cubic-bezier(.19,1,.22,1);
+  --chrome:#08070a; --chrome-line:rgba(243,237,228,.12);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%}
+body{background:var(--chrome);color:var(--ivory);font-family:var(--sans);overflow:hidden;
+  display:grid;grid-template-columns:212px 1fr;-webkit-font-smoothing:antialiased}
+
+/* ---------- Sidebar previews ---------- */
+.rail{height:100vh;overflow-y:auto;padding:16px 16px 24px;border-right:1px solid var(--chrome-line);
+  display:flex;flex-direction:column;gap:14px;scrollbar-width:thin;scrollbar-color:#333 transparent}
+.rail-head{font:600 10px/1 var(--sans);font-stretch:125%;letter-spacing:.22em;color:var(--mute);text-transform:uppercase;padding:2px 0 4px}
+.thumb{display:flex;gap:8px;align-items:flex-start;background:none;border:0;color:inherit;cursor:pointer;text-align:left;font:inherit}
+.thumb-num{font:500 10px/1 var(--sans);color:var(--mute);width:14px;padding-top:2px;flex:none}
+.thumb-frame{position:relative;width:160px;aspect-ratio:16/9;overflow:hidden;border-radius:3px;
+  outline:1px solid var(--chrome-line);transition:outline-color .25s, transform .25s var(--ease);background:var(--ink)}
+.thumb-frame>.slide{position:absolute;left:0;top:0;transform-origin:0 0;transform:scale(calc(160/1920));opacity:1;visibility:visible;pointer-events:none}
+.thumb:hover .thumb-frame{outline-color:rgba(243,237,228,.4)}
+.thumb.on .thumb-frame{outline:2px solid var(--gold)}
+.thumb.on .thumb-num{color:var(--gold)}
+.thumb:focus-visible .thumb-frame{outline:2px solid var(--ivory)}
+
+/* ---------- Stage ---------- */
+.stage{position:relative;height:100vh;display:grid;place-items:center;overflow:hidden}
+.canvas{position:absolute;left:50%;top:50%;width:1920px;height:1080px;transform-origin:center;box-shadow:0 30px 80px rgba(0,0,0,.55)}
+.hud{position:absolute;right:20px;bottom:14px;display:flex;gap:14px;align-items:center;font:500 11px/1 var(--sans);color:var(--mute);letter-spacing:.12em}
+.hud button{background:none;border:1px solid var(--chrome-line);color:var(--ivory);width:30px;height:30px;border-radius:50%;cursor:pointer;font-size:14px}
+.hud button:hover{border-color:var(--gold);color:var(--gold)}
+.hud #snd{font-size:13px}
+.hud #snd.muted{color:var(--mute);text-decoration:line-through}
+.hud #snd.hint{border-color:var(--gold);color:var(--gold);animation:sndHint 1.6s ease-in-out infinite}
+@keyframes sndHint{50%{box-shadow:0 0 0 6px rgba(201,162,74,.25)}}
+.progress{position:absolute;left:0;bottom:0;height:2px;background:var(--gold);transition:width .6s var(--ease)}
+body.present{grid-template-columns:0 1fr}
+body.present .rail{display:none}
+body.present .stage{grid-column:1 / -1}
+body.present .hud{opacity:0;transition:opacity .3s}
+body.present .hud:hover{opacity:1}
+
+/* ---------- Slides (1920x1080 canvas) ---------- */
+.slide{position:absolute;inset:0;width:1920px;height:1080px;overflow:hidden;background:var(--ink);
+  opacity:0;visibility:hidden;transition:opacity .7s ease, visibility 0s .7s}
+.canvas>.slide.active{opacity:1;visibility:visible;transition:opacity .7s ease}
+.slide video,.slide img.vid{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block}
+.grain{position:absolute;inset:-50%;pointer-events:none;opacity:.12;mix-blend-mode:overlay;z-index:20;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  animation:grain .9s steps(6) infinite}
+@keyframes grain{0%{transform:translate(0,0)}20%{transform:translate(-3%,2%)}40%{transform:translate(2%,-3%)}60%{transform:translate(-2%,-1%)}80%{transform:translate(3%,3%)}100%{transform:translate(0,0)}}
+
+.kicker{font:600 20px/1 var(--sans);font-stretch:125%;letter-spacing:.32em;text-transform:uppercase;color:var(--gold);display:flex;align-items:center;gap:22px}
+.kicker::before{content:"";width:80px;height:1px;background:currentColor;transform-origin:left}
+.serif{font-family:var(--serif)}
+.wide{font-family:var(--sans);font-stretch:125%}
+.body{font:400 27px/1.55 var(--sans);color:#d6cfc5;max-width:720px}
+em{font-style:italic}
+.gold{color:var(--gold-2)}
+
+/* split-text pieces */
+[data-split] .w{display:inline-block;overflow:hidden;padding:.06em .02em .14em;margin:-.06em -.02em -.14em;vertical-align:top}
+[data-split] .c{display:inline-block;will-change:transform}
+
+/* Generic motion — runs only on the active slide; final state = default styles (used by thumbnails) */
+.active .rise .c{animation:rise 1.1s var(--ease) both;animation-delay:calc(var(--d,0s) + var(--i) * 45ms)}
+/* start fully below the clip and transparent so no glyph tops peek out before the reveal */
+@keyframes rise{from{transform:translateY(150%) rotate(6deg);filter:blur(6px);opacity:0}to{transform:none;filter:none;opacity:1}}
+.active .rise-w .c{animation:rise 1s var(--ease) both;animation-delay:calc(var(--d,0s) + var(--i) * 70ms)}
+.active .fade-up{animation:fadeUp 1.1s var(--ease) both;animation-delay:var(--d,0s)}
+@keyframes fadeUp{from{opacity:0;transform:translateY(40px)}to{opacity:1;transform:none}}
+.active .track{animation:track 1.6s var(--ease) both;animation-delay:var(--d,0s)}
+@keyframes track{from{letter-spacing:1em;opacity:0;filter:blur(8px)}to{opacity:1;filter:none}}
+.active .kicker::before{animation:drawX 1.2s var(--ease) both;animation-delay:var(--d,0s)}
+.active .kicker span{animation:fadeIn 1s ease both;animation-delay:calc(var(--d,0s) + .3s)}
+@keyframes drawX{from{transform:scaleX(0)}to{transform:scaleX(1)}}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+.active .reveal-up{animation:revealUp 1.5s var(--ease) both;animation-delay:var(--d,0s)}
+@keyframes revealUp{from{clip-path:inset(100% 0 0 0)}to{clip-path:inset(0 0 0 0)}}
+.active .reveal-down{animation:revealDown 1.5s var(--ease) both;animation-delay:var(--d,0s)}
+@keyframes revealDown{from{clip-path:inset(0 0 100% 0)}to{clip-path:inset(0 0 0 0)}}
+.active .zoom-in video{animation:zoomIn 3.2s var(--ease) both;animation-delay:var(--d,0s)}
+@keyframes zoomIn{from{transform:scale(1.3)}to{transform:scale(1.04)}}
+
+/* marquee */
+.marquee{position:absolute;left:0;right:0;white-space:nowrap;overflow:hidden;pointer-events:none}
+.marquee-in{display:inline-flex;animation:marq 40s linear infinite}
+.marquee-in span{padding-right:.6em}
+@keyframes marq{to{transform:translateX(-50%)}}
+.outline{color:transparent;-webkit-text-stroke:1.5px rgba(243,237,228,.28)}
+
+/* ================= 02 MORE IS MORE COVER — model 04: type wall → earring reveal → echo frames ================= */
+/* earring centre in the frame (x, y): every earring-anchored move uses it */
+.cover{--ex:72%;--ey:60%}
+.cover .m4{position:absolute;inset:0;overflow:hidden;clip-path:circle(150% at var(--ex) var(--ey))}
+.cover .m4 video,.cover .m4 img.vid{object-position:50% 50%}
+.active.cover .m4{animation:m4Reveal 2.4s cubic-bezier(.65,0,.25,1) both;animation-delay:var(--d)}
+@keyframes m4Reveal{from{clip-path:circle(0% at var(--ex) var(--ey))}to{clip-path:circle(150% at var(--ex) var(--ey))}}
+/* camera: tight on the earring, rack focus, then pull back to the full frame */
+.active.cover .m4 video{animation:m4Cam 3.6s cubic-bezier(.45,0,.25,1) both;animation-delay:var(--d)}
+@keyframes m4Cam{
+  0%{transform:scale(2);transform-origin:var(--ex) var(--ey);filter:blur(12px) brightness(.85)}
+  35%{transform:scale(1.8);transform-origin:var(--ex) var(--ey);filter:none}
+  100%{transform:scale(1);transform-origin:var(--ex) var(--ey);filter:none}}
+.cover .m4::after{content:"";position:absolute;inset:0;mix-blend-mode:soft-light;
+  background:linear-gradient(120deg,rgba(107,63,160,.55),transparent 55%)}
+
+/* type wall: rows of MORE fill the black opening, then clear before the picture opens up (no type over the face) */
+.cover .wall{position:absolute;inset:-40px 0;z-index:7;pointer-events:none;display:flex;flex-direction:column;justify-content:center;overflow:hidden;opacity:0}
+.active.cover .wall{animation:wallIn 3.4s ease both}
+@keyframes wallIn{0%{opacity:0}12%,32%{opacity:1}50%,100%{opacity:0}}
+.cover .wall div{white-space:nowrap;font:800 236px/.86 var(--sans);font-stretch:125%;letter-spacing:-.01em;color:transparent;-webkit-text-stroke:2px var(--gold-2)}
+.cover .wall div:nth-child(even){-webkit-text-stroke-color:var(--ivory)}
+.cover .wall span{display:inline-block;animation:marq 26s linear infinite}
+.cover .wall div:nth-child(even) span{animation-direction:reverse}
+.active.cover .wall div{animation:rowIn 1.2s var(--ease) both;animation-delay:calc(var(--i) * 90ms)}
+.active.cover .wall div:nth-child(even){animation-name:rowInR}
+@keyframes rowIn{from{transform:translateX(-70%)}to{transform:none}}
+@keyframes rowInR{from{transform:translateX(70%)}to{transform:none}}
+
+/* echo frames: gold outlines pulse outward from the earring — one becomes many */
+.cover .echo{position:absolute;inset:0;z-index:8;pointer-events:none}
+.cover .echo i{position:absolute;left:var(--ex);top:var(--ey);width:520px;height:780px;margin:-390px 0 0 -260px;border:3px solid var(--gold-2);opacity:0}
+.active.cover .echo i{animation:echo 2.2s cubic-bezier(.2,.7,.2,1) both;animation-delay:var(--d)}
+@keyframes echo{0%{opacity:0;transform:scale(.35)}25%{opacity:1}100%{opacity:0;transform:scale(1.9)}}
+
+.cover .shade{position:absolute;inset:0;z-index:9;pointer-events:none;
+  background:linear-gradient(0deg,rgba(11,10,12,.92) 0%,rgba(11,10,12,.55) 24%,rgba(11,10,12,0) 46%),
+             linear-gradient(180deg,rgba(11,10,12,.6) 0%,rgba(11,10,12,0) 18%)}
+.cover .topbar{position:absolute;left:80px;right:80px;top:56px;z-index:10;display:flex;justify-content:space-between;align-items:center;
+  font:600 18px/1 var(--sans);font-stretch:125%;letter-spacing:.3em;text-transform:uppercase}
+.cover .topbar .line{flex:1;height:1px;background:rgba(243,237,228,.45);margin:0 32px;transform-origin:left}
+.active.cover .topbar .line{animation:drawX 1.6s var(--ease) both .6s}
+
+/* earring callout: rises from the earring top, turns right to the label */
+.cover .callout{position:absolute;inset:0;z-index:10;pointer-events:none}
+.cover .callout svg{position:absolute;inset:0;width:100%;height:100%;overflow:visible}
+.cover .callout path{fill:none;stroke:var(--gold-2);stroke-width:3;stroke-dasharray:800;stroke-dashoffset:0}
+.cover .callout circle{fill:var(--gold-2)}
+.active.cover .callout path{animation:calloutDraw 1.2s var(--ease) both 5.6s}
+.active.cover .callout circle{animation:fadeIn .5s ease both 5.5s}
+@keyframes calloutDraw{from{stroke-dashoffset:800}to{stroke-dashoffset:0}}
+.cover .callout b{position:absolute;right:80px;top:146px;font:600 15px/1 var(--sans);font-stretch:125%;letter-spacing:.36em;color:var(--ivory);text-transform:uppercase;text-shadow:0 0 18px rgba(0,0,0,.75),0 1px 3px rgba(0,0,0,.6)}
+.cover .callout b em{font:italic 400 30px/1 var(--serif);letter-spacing:0;color:var(--gold-2);margin-right:14px;text-transform:none}
+
+.cover .title-block{position:absolute;left:80px;bottom:84px;z-index:10}
+.cover .title-block .kicker{margin-bottom:30px}
+.cover h1{font:500 170px/.86 var(--serif);letter-spacing:-.035em;white-space:nowrap}
+.cover h1 em{font-weight:400;color:var(--gold-2)}
+.cover .sub{display:flex;align-items:center;gap:36px;margin-top:40px}
+.cover .sub .wide{font-weight:300;font-size:30px;letter-spacing:.42em;text-transform:uppercase}
+.cover .sub .rule{width:160px;height:1px;background:var(--gold);transform-origin:left}
+.active.cover .sub .rule{animation:drawX 1.4s var(--ease) both 5.2s}
+.badge{position:absolute;left:80px;top:130px;width:187px;height:187px;z-index:10}
+.badge svg{width:100%;height:100%;animation:spin 22s linear infinite}
+.badge text{font:600 15.5px var(--sans);font-stretch:125%;letter-spacing:.38em;fill:var(--ivory);text-transform:uppercase}
+.badge .star{position:absolute;inset:0;display:grid;place-items:center;font:400 55px/1 var(--serif);color:var(--gold-2)}
+@keyframes spin{to{transform:rotate(360deg)}}
+.active .badge{animation:popIn 1.4s var(--ease) both;animation-delay:var(--d,0s)}
+@keyframes popIn{from{opacity:0;transform:scale(.4) rotate(-90deg)}to{opacity:1;transform:none}}
+
+/* ================= 01 GARDEN OF WHIMSY — season opener, Garden_Whimsy_Cover =================
+   a rose petal outline draws itself around the earring, then the picture blooms open through a flower-shaped mask;
+   petals drift across the frame, the sun flares, and the title settles on a cream veil at the right. */
+@property --bloom{syntax:'<length>';inherits:false;initial-value:7000px}
+.garden{--gx:642px;--gy:630px;--ink-g:#3a1f26;--rose:#b23f68;--rose-2:#d9688c;background:#f6ebe3;color:var(--ink-g)}
+.garden .gw{position:absolute;inset:0;overflow:hidden;
+  -webkit-mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='-100 -100 200 200'%3E%3Cg%3E%3Cellipse cx='0' cy='-48' rx='34' ry='52'/%3E%3Cellipse cx='0' cy='-48' rx='34' ry='52' transform='rotate(72)'/%3E%3Cellipse cx='0' cy='-48' rx='34' ry='52' transform='rotate(144)'/%3E%3Cellipse cx='0' cy='-48' rx='34' ry='52' transform='rotate(216)'/%3E%3Cellipse cx='0' cy='-48' rx='34' ry='52' transform='rotate(288)'/%3E%3Ccircle r='30'/%3E%3C/g%3E%3C/svg%3E") no-repeat;
+  mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='-100 -100 200 200'%3E%3Cg%3E%3Cellipse cx='0' cy='-48' rx='34' ry='52'/%3E%3Cellipse cx='0' cy='-48' rx='34' ry='52' transform='rotate(72)'/%3E%3Cellipse cx='0' cy='-48' rx='34' ry='52' transform='rotate(144)'/%3E%3Cellipse cx='0' cy='-48' rx='34' ry='52' transform='rotate(216)'/%3E%3Cellipse cx='0' cy='-48' rx='34' ry='52' transform='rotate(288)'/%3E%3Ccircle r='30'/%3E%3C/g%3E%3C/svg%3E") no-repeat;
+  -webkit-mask-size:var(--bloom) var(--bloom);mask-size:var(--bloom) var(--bloom);
+  -webkit-mask-position:calc(var(--gx) - var(--bloom) / 2) calc(var(--gy) - var(--bloom) / 2);mask-position:calc(var(--gx) - var(--bloom) / 2) calc(var(--gy) - var(--bloom) / 2)}
+.active.garden .gw{animation:bloomOpen 2.6s cubic-bezier(.7,0,.2,1) both 1.05s}
+@keyframes bloomOpen{from{--bloom:0px}to{--bloom:7000px}}
+/* camera: close and sun-washed on the earring, settling to the full frame */
+.active.garden .gw video{animation:gwCam 4.2s cubic-bezier(.3,0,.15,1) both 1.05s}
+@keyframes gwCam{from{transform:scale(1.35);transform-origin:var(--gx) var(--gy);filter:brightness(1.18) saturate(.55)}
+  60%{filter:none}to{transform:none;transform-origin:var(--gx) var(--gy);filter:none}}
+/* petal outline drawn on the blank page around the earring, then swept open by the bloom */
+.garden .sketch{position:absolute;left:calc(var(--gx) - 150px);top:calc(var(--gy) - 150px);width:300px;height:300px;z-index:3;pointer-events:none;opacity:0}
+.garden .sketch path{fill:none;stroke:var(--rose);stroke-width:1.6;stroke-dasharray:1 1;stroke-dashoffset:1}
+.active.garden .sketch{animation:sketchLife 2.4s cubic-bezier(.5,0,.3,1) both .15s}
+@keyframes sketchLife{0%{opacity:1;transform:rotate(-40deg) scale(.7)}45%{opacity:1;transform:rotate(0) scale(1)}100%{opacity:0;transform:rotate(25deg) scale(5)}}
+.active.garden .sketch path{animation:leaderDrip 1.1s cubic-bezier(.55,0,.25,1) both;animation-delay:calc(.2s + var(--i) * 90ms)}
+/* sun flare over the sunset, top right */
+.garden .sun{position:absolute;left:1420px;top:250px;width:1100px;height:1100px;margin:-550px 0 0 -550px;z-index:3;pointer-events:none;mix-blend-mode:screen;
+  background:radial-gradient(closest-side,rgba(255,226,170,.75),rgba(255,190,150,.28) 38%,rgba(255,180,160,0) 72%);opacity:.7}
+.active.garden .sun{animation:sunIn 3s ease both 2s, sunBreath 6s ease-in-out infinite 5s}
+@keyframes sunIn{from{opacity:0;transform:scale(.5)}to{opacity:.7;transform:none}}
+@keyframes sunBreath{50%{opacity:.85;transform:scale(1.08)}}
+/* drifting petals: each falls on its own path and sway; hidden in previews (default opacity 0) */
+.garden .petals{position:absolute;inset:0;z-index:6;pointer-events:none;overflow:hidden}
+.garden .petals i{position:absolute;left:var(--x);top:-60px;width:var(--s);height:calc(var(--s) * 1.35);opacity:0;
+  border-radius:80% 0 80% 0;background:linear-gradient(135deg,var(--c1),var(--c2));filter:blur(var(--b,0px));box-shadow:inset -2px -3px 6px rgba(255,255,255,.35)}
+.active.garden .petals i{animation:petalFall var(--t) linear infinite;animation-delay:var(--d)}
+@keyframes petalFall{
+  0%{opacity:0;transform:translate(0,0) rotate(0deg) rotateY(0deg)}
+  8%{opacity:.95}
+  25%{transform:translate(calc(var(--w) * 1),260px) rotate(90deg) rotateY(120deg)}
+  50%{transform:translate(calc(var(--w) * -.4),560px) rotate(170deg) rotateY(240deg)}
+  75%{transform:translate(calc(var(--w) * .8),860px) rotate(260deg) rotateY(330deg)}
+  92%{opacity:.9}
+  100%{opacity:0;transform:translate(calc(var(--w) * .2),1180px) rotate(340deg) rotateY(420deg)}}
+/* cream veils: title side (right), look label (bottom left), topbar */
+.garden .veil{position:absolute;inset:0;z-index:5;pointer-events:none;
+  background:linear-gradient(270deg,rgba(248,238,230,.86) 0%,rgba(248,238,230,.6) 24%,rgba(248,238,230,0) 40%),
+             linear-gradient(180deg,rgba(248,238,230,.6) 0%,rgba(248,238,230,0) 15%),
+             radial-gradient(820px 240px at 0% 100%,rgba(248,238,230,.94) 0%,rgba(248,238,230,.62) 45%,rgba(248,238,230,0) 100%)}
+.active.garden .veil{animation:fadeIn 1.6s ease both 2.6s}
+.garden .topbar{position:absolute;left:80px;right:80px;top:56px;z-index:10;display:flex;justify-content:space-between;align-items:center;
+  font:600 18px/1 var(--sans);font-stretch:125%;letter-spacing:.3em;text-transform:uppercase;color:var(--ink-g)}
+.garden .topbar .line{flex:1;height:1px;background:rgba(58,31,38,.4);margin:0 32px;transform-origin:left}
+.active.garden .topbar .line{animation:drawX 1.6s var(--ease) both .6s}
+/* callout: a dot blooms on the earring, the line drips down to the shoulder line and turns left to the look label */
+.garden .callout{position:absolute;inset:0;z-index:10;pointer-events:none}
+.garden .callout svg{position:absolute;inset:0;width:100%;height:100%;overflow:visible}
+.garden .callout path{fill:none;stroke:var(--rose);stroke-width:3;stroke-dasharray:1 1;stroke-dashoffset:0}
+.garden .callout circle{fill:var(--rose);transform-box:fill-box;transform-origin:center}
+.active.garden .callout circle{animation:dotPop .6s cubic-bezier(.34,1.56,.64,1) both 5s}
+.active.garden .callout path{animation:leaderDrip 1.4s cubic-bezier(.55,0,.25,1) both 5.45s}
+.garden .callout b{position:absolute;left:80px;top:968px;font:600 15px/1 var(--sans);font-stretch:125%;letter-spacing:.36em;text-transform:uppercase;color:var(--ink-g);
+  text-shadow:0 0 14px rgba(248,238,230,.95),0 0 3px rgba(248,238,230,.85)}
+.garden .callout b em{font:italic 500 30px/1 var(--serif);letter-spacing:0;color:var(--rose);margin-right:14px;text-transform:none}
+.garden .title-block{position:absolute;right:80px;bottom:96px;z-index:10;text-align:right;display:flex;flex-direction:column;align-items:flex-end}
+.garden .kicker{color:var(--rose);font-size:16px;letter-spacing:.26em;margin-right:-.26em;margin-bottom:34px}
+.garden .kicker::before{display:none}
+/* "Garden / of Whimsy" stacked narrow so it stays clear of the right earring and cheek (x < 1180) */
+.garden h1{font:500 150px/.9 var(--serif);letter-spacing:-.035em;white-space:nowrap}
+.garden h1 em{font-weight:400;color:var(--rose)}
+/* the italic y of Whimsy swings below and right of the default split-text clip box: give this title more room */
+.garden h1 [data-split] .w{padding:.06em .16em .34em;margin:-.06em -.16em -.34em}
+.garden h1 small{font:italic 400 64px/1 var(--serif);letter-spacing:0;color:var(--ink-g);margin-right:.22em;vertical-align:.32em}
+.garden .sub{display:flex;align-items:center;gap:36px;margin-top:42px}
+.garden .sub .wide{font-weight:400;font-size:28px;letter-spacing:.42em;margin-right:-.42em;text-transform:uppercase}
+.garden .sub .rule{width:160px;height:1px;background:var(--rose);transform-origin:right}
+.active.garden .sub .rule{animation:drawX 1.4s var(--ease) both 4.6s}
+.garden .tagline{font:italic 400 38px/1 var(--serif);color:#5a3a40;margin-top:30px}
+.garden .badge{left:auto;right:80px;top:130px}
+.garden .badge text{fill:var(--ink-g)}
+.garden .badge .star{color:var(--rose)}
+.garden .grain{opacity:.08}
+
+/* ================= 02 STATEMENT ================= */
+.statement .frame{position:absolute;left:120px;top:110px;width:780px;height:820px;overflow:hidden;background:#fff}
+.statement .frame video{object-position:50% 40%}
+.statement .edge{position:absolute;left:150px;top:140px;width:780px;height:820px;border:1px solid var(--gold);z-index:-0}
+.active.statement .edge{animation:fadeIn 1.2s ease both .9s}
+.statement .copy{position:absolute;left:1020px;top:150px;width:800px}
+.statement h2{font:500 210px/.88 var(--serif);letter-spacing:-.035em;margin:48px 0 56px}
+.statement h2 em{color:var(--gold-2);font-weight:400}
+.statement .body{margin-bottom:44px}
+.statement .meta{display:flex;gap:56px;font:600 15px/1.6 var(--sans);font-stretch:125%;letter-spacing:.25em;text-transform:uppercase;color:var(--mute)}
+.statement .meta b{display:block;color:var(--ivory);font-weight:600}
+.statement .marquee{bottom:30px;font:800 120px/1 var(--sans);font-stretch:125%;letter-spacing:.02em}
+.statement .vcap{position:absolute;left:68px;top:110px;writing-mode:vertical-rl;transform:rotate(180deg);font:600 14px/1 var(--sans);font-stretch:125%;letter-spacing:.4em;color:var(--mute);text-transform:uppercase}
+
+/* ================= 03 MAXIMALISM — FOUR CODES ================= */
+/* matched to earring-4.mp4: near-black violet on the left warming to deep violet behind the clip (sampled from its frame) */
+.codes{background:linear-gradient(90deg,#040308 0%,#05040d 55%,#140a26 96%)}
+.codes .head{position:absolute;left:120px;top:110px}
+.codes h2{font:800 104px/.9 var(--sans);font-stretch:125%;letter-spacing:-.02em;text-transform:uppercase;margin-top:36px}
+.codes h2 + p{font:italic 400 46px/1.2 var(--serif);color:var(--gold-2);margin-top:20px}
+.codes .grid{position:absolute;left:120px;top:500px;width:900px;display:grid;grid-template-columns:1fr 1fr;gap:56px 72px}
+.codes .item .n{font:500 18px/1 var(--sans);font-stretch:125%;letter-spacing:.3em;color:var(--gold)}
+.codes .item .ln{height:1px;background:rgba(243,237,228,.3);margin:18px 0 22px;transform-origin:left}
+.codes .item h3{font:italic 500 50px/1 var(--serif);margin-bottom:12px}
+.codes .item p{font:400 23px/1.5 var(--sans);color:#cbc3b8}
+.active.codes .item .ln{animation:drawX 1.2s var(--ease) both;animation-delay:var(--d)}
+/* earring-4: the slide background matches the clip, and feathered edges hide the square */
+.codes .e4{position:absolute;right:70px;top:120px;width:800px;height:800px;
+  -webkit-mask-image:linear-gradient(90deg,transparent,#000 9%,#000 91%,transparent),linear-gradient(180deg,transparent,#000 9%,#000 91%,transparent);-webkit-mask-composite:source-in;mask-image:linear-gradient(90deg,transparent,#000 9%,#000 91%,transparent),linear-gradient(180deg,transparent,#000 9%,#000 91%,transparent);mask-composite:intersect}
+.codes .e4 video,.codes .e4 img.vid{object-fit:contain}
+.active.codes .e4{animation:e4In 1.8s var(--ease) both .4s}
+@keyframes e4In{from{opacity:0;transform:scale(1.12);filter:blur(10px)}to{opacity:1;transform:none;filter:none}}
+.codes .portrait-cap{position:absolute;right:120px;top:960px;z-index:3;font:600 14px/1 var(--sans);font-stretch:125%;letter-spacing:.35em;color:var(--mute);text-transform:uppercase}
+
+/* ================= 04 THE ART OF FORM — chapter cover, model 05 =================
+   ivory columns lift off the clip like a cast being opened, then the title settles on the light streaks at the right. */
+.form{--fx:516px;--fy:560px;--ink-t:#1a1612;--gold-d:#9c7a2c;background:#efe9df;color:var(--ink-t)}
+.form .m5{position:absolute;inset:0;overflow:hidden}
+.active.form .m5 video{animation:m5Sculpt 4.2s cubic-bezier(.3,0,.15,1) both .2s}
+@keyframes m5Sculpt{from{transform:scale(1.14);filter:saturate(.2) brightness(1.08)}55%{filter:none}to{transform:none;filter:none}}
+/* columns: final state = lifted away (thumbnails show the open picture) */
+.form .cols{position:absolute;inset:0;z-index:2;display:grid;grid-template-columns:repeat(6,1fr);pointer-events:none}
+.form .cols i{background:#efe9df;transform:translateY(-101%);box-shadow:inset -1px 0 0 rgba(156,122,44,.35)}
+.form .cols i:nth-child(even){transform:translateY(101%)}
+.active.form .cols i{animation:colUp 1.5s cubic-bezier(.76,0,.24,1) both;animation-delay:calc(.35s + var(--i) * 110ms)}
+.active.form .cols i:nth-child(even){animation-name:colDown}
+@keyframes colUp{from{transform:none}to{transform:translateY(-101%)}}
+@keyframes colDown{from{transform:none}to{transform:translateY(101%)}}
+/* legibility veil on the bright right side, ivory not black */
+.form .veil{position:absolute;inset:0;z-index:4;pointer-events:none;
+  background:linear-gradient(270deg,rgba(239,233,223,.82) 0%,rgba(239,233,223,.55) 26%,rgba(239,233,223,0) 46%),
+             linear-gradient(180deg,rgba(239,233,223,.55) 0%,rgba(239,233,223,0) 16%),
+             radial-gradient(760px 230px at 0% 100%,rgba(239,233,223,.92) 0%,rgba(239,233,223,.6) 45%,rgba(239,233,223,0) 100%)}
+.active.form .veil{animation:fadeIn 1.6s ease both 2.6s}
+.form .topbar{position:absolute;left:80px;right:80px;top:56px;z-index:10;display:flex;justify-content:space-between;align-items:center;
+  font:600 18px/1 var(--sans);font-stretch:125%;letter-spacing:.3em;text-transform:uppercase;color:var(--ink-t)}
+.form .topbar .line{flex:1;height:1px;background:rgba(26,22,18,.4);margin:0 32px;transform-origin:left}
+.active.form .topbar .line{animation:drawX 1.6s var(--ease) both .6s}
+/* callout: leaves the earring, drops to the satin shoulder, turns left to the look label */
+.form .callout{position:absolute;inset:0;z-index:10;pointer-events:none}
+.form .callout svg{position:absolute;inset:0;width:100%;height:100%;overflow:visible}
+/* pathLength=1: the dash covers the whole leader, so nothing shows before the draw (v10 left a 100px stub on the blank opening) */
+.form .callout path{fill:none;stroke:var(--gold-d);stroke-width:3;stroke-dasharray:1 1;stroke-dashoffset:0}
+.form .callout circle{fill:var(--gold-d);transform-box:fill-box;transform-origin:center}
+/* the dot appears on the earring first, then the line runs down from it and turns to the label */
+.active.form .callout circle{animation:dotPop .6s cubic-bezier(.34,1.56,.64,1) both 5s}
+@keyframes dotPop{from{opacity:0;transform:scale(0)}to{opacity:1;transform:none}}
+.active.form .callout path{animation:leaderDrip 1.4s cubic-bezier(.55,0,.25,1) both 5.45s}
+@keyframes leaderDrip{from{stroke-dashoffset:1}to{stroke-dashoffset:0}}
+.form .callout b{position:absolute;left:80px;top:968px;font:600 15px/1 var(--sans);font-stretch:125%;letter-spacing:.36em;text-transform:uppercase;color:var(--ink-t);
+  text-shadow:0 0 14px rgba(239,233,223,.9),0 0 3px rgba(239,233,223,.8)}
+.form .callout b em{font:italic 500 30px/1 var(--serif);letter-spacing:0;color:#7a5c1c;margin-right:14px;text-transform:none}
+.form .title-block{position:absolute;right:80px;bottom:96px;z-index:10;text-align:right;display:flex;flex-direction:column;align-items:flex-end}
+/* kicker kept short and line-free so it never reaches the cheek / right earring */
+.form .kicker{color:var(--gold-d);font-size:16px;letter-spacing:.26em;margin-right:-.26em;margin-bottom:34px}
+.form .kicker::before{display:none}
+.form h1{font:500 168px/.88 var(--serif);letter-spacing:-.035em;white-space:nowrap}
+.form h1 em{font-weight:400;color:var(--gold-d)}
+.form .sub{display:flex;align-items:center;gap:36px;margin-top:42px}
+.form .sub .wide{font-weight:400;font-size:28px;letter-spacing:.42em;margin-right:-.42em;text-transform:uppercase}
+.form .sub .rule{width:160px;height:1px;background:var(--gold-d);transform-origin:right}
+.active.form .sub .rule{animation:drawX 1.4s var(--ease) both 4.6s}
+.form .tagline{font:italic 400 38px/1 var(--serif);color:#4a4037;margin-top:30px}
+.form .badge{left:auto;right:80px;top:130px}
+.form .badge text{fill:var(--ink-t)}
+.form .badge .star{color:var(--gold-d)}
+
+/* ================= 05 SCULPTURAL ESSENTIALS — slide 3 format, vintage gold cuff =================
+   vintage-gold-wide-8s.mp4 (10s source retimed to 8s) is 1080x1080 on a gradient from blue-black #04020a at the top-left
+   to grey #1f1f1f at the right. It is shown at 950px (v13 864px +10%) and pushed to the right edge, vertically centred,
+   to leave air between the copy and the cuff. The slide background (vintage-gold-wide-bg.png) continues the clip's
+   own gradient: a Coons patch through the clip's four sampled edges, clamped outside the box, so all four edges
+   meet a matching colour; a thin feather hides the last 8-bit step. */
+.codes.sculpt{background:#04020a url(assets/vintage-gold-wide-bg-950.png) 0 0/100% 100% no-repeat}
+.codes.sculpt h2{font-size:96px;line-height:.94}
+.codes.sculpt .grid{top:560px;width:860px}
+.codes .vg{position:absolute;right:0;top:65px;width:950px;height:950px;
+  -webkit-mask-image:linear-gradient(90deg,transparent,#000 4%,#000 96%,transparent),linear-gradient(180deg,transparent,#000 4%,#000 96%,transparent);-webkit-mask-composite:source-in;
+  mask-image:linear-gradient(90deg,transparent,#000 4%,#000 96%,transparent),linear-gradient(180deg,transparent,#000 4%,#000 96%,transparent);mask-composite:intersect}
+.codes .vg video,.codes .vg img.vid{object-fit:cover}
+.active.codes .vg{animation:vgIn 2s var(--ease) both .3s}
+@keyframes vgIn{from{opacity:0;filter:blur(10px) brightness(.6)}to{opacity:1;filter:none}}
+.active.codes .vg video{animation:vgDrift 2.4s var(--ease) both .3s}
+@keyframes vgDrift{from{transform:scale(1.1) translateX(40px)}to{transform:none}}
+.codes.sculpt .portrait-cap{right:80px;top:1010px}
+
+/* ================= 02 ROMANTIC DETAILS — Garden of Whimsy four codes, Earrings_Flower =================
+   earrings-flower.mp4 = Earrings_Flower.mp4 with the empty raspberry strip on the right cropped off (1280→1152 wide, all 121 frames).
+   v19: +20% — earrings-flower-120.mp4 (cropped 1280→1072 wide) shown at 1251x840 (≈78% of a full frame), flush right, vertically centred;
+   earrings sit at x≈1000–1880, the copy grid narrowed to 820px to keep clear of them. The clip carries no audio track.
+   v23: clip swapped to Earrings_Beads.mp4 (2160² square, 97 frames, 4.04s) → earrings-beads.mp4 at 1080², shown 920x920 at (1000,92), flush right.
+   Same earring size and placement as v19 (earrings ≈ x 1020–1904, y 178–902); left feather 2% because the petals reach 2.2% of the frame.
+   Background earrings-beads-bg.png rebuilt from this clip’s edges, still ending at #040309 on the left.
+   The background (earrings-flower-bg.png) continues the clip: Coons patch through its four time-averaged edges inside the box,
+   clamped above/below, and eased out to #040309 at the left edge. Accents switch from gold to blush rose. */
+.codes.romantic{--gold:#e98aa8;--gold-2:#f7bccc;background:#040309 url(assets/earrings-beads-bg.png) 0 0/100% 100% no-repeat}
+.codes.romantic h2{font-size:96px;line-height:.94}
+.codes.romantic .grid{top:515px;width:820px;row-gap:44px;column-gap:64px}
+.codes.romantic .item p{color:#d9cdd0}
+.codes .ef{position:absolute;left:1000px;top:92px;width:920px;height:920px;
+  -webkit-mask-image:linear-gradient(90deg,transparent,#000 2%),linear-gradient(180deg,transparent,#000 5%,#000 95%,transparent);-webkit-mask-composite:source-in;
+  mask-image:linear-gradient(90deg,transparent,#000 2%),linear-gradient(180deg,transparent,#000 5%,#000 95%,transparent);mask-composite:intersect}
+.codes .ef video,.codes .ef img.vid{object-fit:cover}
+.active.codes .ef{animation:efIn 2s var(--ease) both .3s}
+@keyframes efIn{from{opacity:0;filter:blur(10px) brightness(.6)}to{opacity:1;filter:none}}
+.active.codes .ef video{animation:efBloom 2.4s var(--ease) both .3s}
+@keyframes efBloom{from{transform:scale(1.12) rotate(-3deg);transform-origin:50% 49%}to{transform:none;transform-origin:50% 49%}}
+.codes.romantic .portrait-cap{right:80px;top:1010px;color:rgba(247,214,222,.75)}
+
+/* ================= 04 PALETTE ================= */
+.palette .bg video{filter:blur(40px) brightness(.2) saturate(1.4);transform:scale(1.2)}
+.palette .bg{position:absolute;inset:0}
+.palette .hero{position:absolute;left:120px;top:250px;width:640px;height:720px;overflow:hidden;background:#fff}
+.palette .head{position:absolute;left:120px;top:100px}
+.palette h2{font:500 104px/1 var(--serif);letter-spacing:-.03em;margin-top:28px}
+.palette h2 em{color:var(--gold-2)}
+.palette .sw{position:absolute;left:860px;right:120px;top:250px;height:720px;display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:14px}
+.palette .bar{position:relative;background:var(--c);transform-origin:bottom;display:flex;flex-direction:column;justify-content:flex-end;padding:22px 18px;
+  box-shadow:inset 0 0 0 1px rgba(255,255,255,.08)}
+.palette .bar:nth-child(odd){margin-top:80px}
+.palette .bar b{font:italic 500 27px/1.05 var(--serif);color:var(--t,#fff)}
+.palette .bar small{display:block;font:600 13px/1.6 var(--sans);font-stretch:125%;letter-spacing:.2em;color:var(--t,#fff);opacity:.75;margin-top:10px;text-transform:uppercase}
+.active.palette .bar{animation:barUp 1.3s var(--ease) both;animation-delay:calc(.4s + var(--i) * 90ms)}
+@keyframes barUp{from{transform:scaleY(0)}to{transform:scaleY(1)}}
+.active.palette .bar b,.active.palette .bar small{animation:fadeIn .8s ease both;animation-delay:calc(1.1s + var(--i) * 90ms)}
+.palette .legend{position:absolute;left:860px;top:150px;width:940px;display:flex;justify-content:space-between;font:600 16px/1 var(--sans);font-stretch:125%;letter-spacing:.3em;color:var(--mute);text-transform:uppercase}
+
+/* ================= 05 HERO PIECE ================= */
+.piece .copy{position:absolute;left:120px;top:110px;width:640px}
+.piece h2{font:500 124px/.92 var(--serif);letter-spacing:-.035em;margin:40px 0 30px}
+.piece h2 em{color:var(--gold-2)}
+.piece ul{list-style:none;margin-top:40px;border-top:1px solid rgba(243,237,228,.2)}
+.piece li{display:grid;grid-template-columns:170px 1fr;padding:22px 0;border-bottom:1px solid rgba(243,237,228,.2);font:400 25px/1.4 var(--sans);color:#d6cfc5}
+.piece li span{font:600 15px/1.9 var(--sans);font-stretch:125%;letter-spacing:.28em;color:var(--gold);text-transform:uppercase}
+.piece .a{position:absolute;left:840px;top:110px;width:560px;height:860px;overflow:hidden;background:#fff;z-index:2}
+.piece .b{position:absolute;left:1340px;top:500px;width:480px;height:430px;overflow:hidden;background:#fff;z-index:3;box-shadow:0 40px 80px rgba(0,0,0,.5)}
+.piece .ring{position:absolute;left:1280px;top:60px;width:560px;height:560px;z-index:1}
+.piece .ring svg{width:100%;height:100%}
+.piece .ring circle{fill:none;stroke:var(--gold);stroke-width:1.2;stroke-dasharray:1700}
+.active.piece .ring circle{animation:dash 2.6s var(--ease) both .5s}
+@keyframes dash{from{stroke-dashoffset:1700}to{stroke-dashoffset:0}}
+.piece .ring .orbit{transform-origin:280px 280px;animation:spin 14s linear infinite}
+.piece .ring .orbit circle{fill:var(--gold-2);stroke:none}
+.piece .label{position:absolute;z-index:4;font:600 14px/1 var(--sans);font-stretch:125%;letter-spacing:.32em;color:var(--ivory);text-transform:uppercase;display:flex;align-items:center;gap:14px}
+.piece .label::before{content:"";width:60px;height:1px;background:var(--gold-2)}
+.piece .l1{left:840px;top:1000px}
+.piece .l2{left:1340px;top:960px}
+
+/* ================= 06 CLOSING ================= */
+.closing .col{position:absolute;top:0;width:640px;height:1080px;overflow:hidden}
+.closing .c1{left:0}.closing .c2{left:640px}.closing .c3{left:1280px}
+.closing .col video{object-position:50% 45%}
+.closing .col::after{content:"";position:absolute;inset:0;mix-blend-mode:multiply}
+.closing .c1::after{background:var(--amethyst-2)}
+.closing .c3::after{background:var(--gold)}
+.closing .veil{position:absolute;inset:0;background:radial-gradient(900px 520px at 50% 52%,rgba(11,10,12,.86),rgba(11,10,12,.45) 70%,rgba(11,10,12,.25));z-index:5}
+.closing .center{position:absolute;inset:0;z-index:6;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center}
+.closing h2{font:500 260px/.85 var(--serif);letter-spacing:-.04em;margin:44px 0 48px;white-space:nowrap}
+.closing h2 em{color:var(--gold-2);font-weight:400}
+.closing .kicker::after{content:"";width:80px;height:1px;background:currentColor;transform-origin:right}
+.active.closing .kicker::after{animation:drawX 1.2s var(--ease) both}
+.closing .sig{font:300 26px/1 var(--sans);font-stretch:125%;letter-spacing:.5em;text-transform:uppercase}
+.closing .sig b{font-weight:700}
+
+/* cover hold (slides with data-hold): every running motion stops on the settled frame */
+.slide.frozen *,.slide.frozen *::before,.slide.frozen *::after{animation-play-state:paused!important}
+/* ...except the rotating badge, which keeps turning over the held frame */
+.slide.frozen .badge svg{animation-play-state:running!important}
+
+/* slide footer */
+.foot{position:absolute;left:120px;right:120px;bottom:46px;display:flex;justify-content:space-between;z-index:15;
+  font:600 13px/1 var(--sans);font-stretch:125%;letter-spacing:.32em;text-transform:uppercase;color:rgba(243,237,228,.5)}
+
+/* Thumbnails: no motion, show final state */
+.thumb-frame .slide *,.thumb-frame .slide *::before,.thumb-frame .slide *::after{animation:none!important;transition:none!important}
+
+@media (max-width:760px){
+  body{grid-template-columns:1fr;grid-template-rows:auto 1fr}
+  .rail{height:auto;flex-direction:row;overflow-x:auto;overflow-y:hidden;border-right:0;border-bottom:1px solid var(--chrome-line);padding:12px 16px}
+  .rail-head{display:none}
+  .thumb-frame{width:120px}
+  .thumb-frame>.slide{transform:scale(calc(120/1920))}
+  .stage{height:auto}
+}
+@media (prefers-reduced-motion:reduce){
+  .slide *,.slide *::before,.slide *::after{animation-duration:.01ms!important;animation-iteration-count:1!important}
+}
+/* display-size Bodoni: pin a mid optical size so hairlines survive the scaled-down canvas.
+   Kept last: the `font` shorthands above reset both properties. */
+.cover h1,.cover .tag b,.statement h2,.codes h2 + p,.palette h2,.piece h2,.closing h2,.form h1,.form .tagline,.garden h1,.garden h1 small,.garden .tagline{font-optical-sizing:none;font-variation-settings:"opsz" 30}
+/* the small italic "of" (64px) loses the f crossbar hairline at slide scale: a lower optical size thickens its hairlines slightly */
+.garden h1 small{font-variation-settings:"opsz" 16}
+</style>
+</head>
+<body>
+
+<nav class="rail" id="rail" aria-label="Slides"><div class="rail-head">BW/S · SS27</div></nav>
+
+<main class="stage" id="stage">
+  <div class="canvas" id="canvas">
+
+    <!-- 01 GARDEN OF WHIMSY — season opener -->
+    <section class="slide garden" data-title="Garden of Whimsy" data-hold="10.5" data-sound="bloom">
+      <div class="gw"><video data-start="0.42" src="assets/garden-whimsy.mp4" poster="assets/garden-whimsy.jpg" muted loop playsinline preload="auto"></video></div>
+      <div class="sketch" aria-hidden="true">
+        <svg viewBox="-100 -100 200 200"><g>
+          <path pathLength="1" style="--i:0" d="M0 -4 C-30 -20 -36 -86 0 -100 C36 -86 30 -20 0 -4Z"/>
+          <path pathLength="1" style="--i:1" transform="rotate(72)" d="M0 -4 C-30 -20 -36 -86 0 -100 C36 -86 30 -20 0 -4Z"/>
+          <path pathLength="1" style="--i:2" transform="rotate(144)" d="M0 -4 C-30 -20 -36 -86 0 -100 C36 -86 30 -20 0 -4Z"/>
+          <path pathLength="1" style="--i:3" transform="rotate(216)" d="M0 -4 C-30 -20 -36 -86 0 -100 C36 -86 30 -20 0 -4Z"/>
+          <path pathLength="1" style="--i:4" transform="rotate(288)" d="M0 -4 C-30 -20 -36 -86 0 -100 C36 -86 30 -20 0 -4Z"/>
+          <path pathLength="1" style="--i:5" d="M0 -16 A16 16 0 1 1 0 16 A16 16 0 1 1 0 -16Z"/>
+        </g></svg>
+      </div>
+      <div class="sun"></div>
+      <div class="veil"></div>
+      <div class="petals" aria-hidden="true">
+        <i style="--x:4%;--s:22px;--w:60px;--t:9s;--d:1.6s;--c1:#ffd0dc;--c2:#f08aa8"></i>
+        <i style="--x:14%;--s:16px;--w:-40px;--t:11s;--d:2.4s;--c1:#fff3ea;--c2:#f6c2b0;--b:1px"></i>
+        <i style="--x:23%;--s:28px;--w:80px;--t:8s;--d:3.3s;--c1:#ffb9c9;--c2:#e0577f;--b:2px"></i>
+        <i style="--x:33%;--s:18px;--w:-70px;--t:10s;--d:1.9s;--c1:#ffe2c4;--c2:#f6a26c"></i>
+        <i style="--x:52%;--s:24px;--w:-60px;--t:9.5s;--d:2.9s;--c1:#ffc6d4;--c2:#ea6f93"></i>
+        <i style="--x:61%;--s:20px;--w:90px;--t:10.5s;--d:1.4s;--c1:#ffe9d6;--c2:#f3b28a"></i>
+        <i style="--x:69%;--s:32px;--w:-50px;--t:8.5s;--d:3.7s;--c1:#ffcbd8;--c2:#d84f78;--b:3px"></i>
+        <i style="--x:77%;--s:17px;--w:70px;--t:11.5s;--d:2.1s;--c1:#fff;--c2:#f0c3cf"></i>
+        <i style="--x:85%;--s:23px;--w:-80px;--t:9s;--d:4.6s;--c1:#ffd9c2;--c2:#f2946a;--b:1px"></i>
+        <i style="--x:92%;--s:19px;--w:40px;--t:10s;--d:2.7s;--c1:#ffc0d0;--c2:#e66a90"></i>
+        <i style="--x:97%;--s:26px;--w:-90px;--t:12.5s;--d:5.2s;--c1:#fff1e6;--c2:#f5b6a0;--b:2px"></i>
+      </div>
+      <div class="callout">
+        <svg viewBox="0 0 1920 1080" aria-hidden="true"><circle cx="642" cy="630" r="8"/><path d="M642 630 V935 H80" pathLength="1"/></svg>
+        <b class="fade-up" style="--d:6.4s"><em>Look 01</em>— Color in Bloom</b>
+      </div>
+      <div class="topbar"><span class="fade-up" style="--d:.4s">BW/S</span><span class="line"></span><span class="fade-up" style="--d:.6s">New York · SS/27</span></div>
+      <div class="badge" style="--d:5.6s">
+        <svg viewBox="0 0 220 220" aria-hidden="true"><defs><path id="circ1" d="M110,110 m-86,0 a86,86 0 1,1 172,0 a86,86 0 1,1 -172,0"/></defs>
+          <text><textPath href="#circ1">Garden of Whimsy ✦ Romantic ✦ SS27 ✦ </textPath></text></svg>
+        <div class="star">✿</div>
+      </div>
+      <div class="title-block">
+        <div class="kicker" style="--d:3.4s"><span>Spring Summer 2027 · The Bloom Edit</span></div>
+        <h1 aria-label="Garden of Whimsy"><span class="rise" data-split="chars" style="--d:3.6s">Garden</span><br><small class="rise" data-split="chars" style="--d:3.85s">of</small><em class="rise" data-split="chars" style="--d:4s">Whimsy</em></h1>
+        <div class="sub"><span class="wide track" style="--d:4.8s">Romantic Details</span><span class="rule"></span></div>
+        <p class="tagline fade-up" style="--d:5.3s">Where nature meets imagination.</p>
+      </div>
+      <div class="grain"></div>
+    </section>
+
+    <!-- 02 ROMANTIC DETAILS — four codes for Garden of Whimsy -->
+    <section class="slide codes romantic" data-title="Romantic Details — Four Codes">
+      <div class="ef"><video src="assets/earrings-beads.mp4" poster="assets/earrings-beads.jpg" muted loop playsinline preload="auto"></video></div>
+      <div class="head">
+        <div class="kicker" style="--d:.2s"><span>02 · The Language</span></div>
+        <h2 aria-label="Romantic Details"><span class="rise" data-split="chars" style="--d:.3s">Romantic</span><br><span class="rise" data-split="chars" style="--d:.5s">Details</span></h2>
+        <p class="fade-up" style="--d:1s">Four codes for SS27</p>
+      </div>
+      <div class="grid">
+        <div class="item fade-up" style="--d:1.1s"><div class="n">01</div><div class="ln" style="--d:1.2s"></div><h3>Bloom</h3><p>Sculpted petals and dimensional florals. Nature reimagined as wearable art.</p></div>
+        <div class="item fade-up" style="--d:1.25s"><div class="n">02</div><div class="ln" style="--d:1.35s"></div><h3>Colorcraft</h3><p>Vibrant contrasts, layered finishes and expressive surface textures. Color becomes the craft.</p></div>
+        <div class="item fade-up" style="--d:1.4s"><div class="n">03</div><div class="ln" style="--d:1.5s"></div><h3>Beadwork</h3><p>Playful seed-bead clusters and tactile details. Tiny accents with joyful impact.</p></div>
+        <div class="item fade-up" style="--d:1.55s"><div class="n">04</div><div class="ln" style="--d:1.65s"></div><h3>Whimsy</h3><p>Unexpected proportions and charming details. A playful twist on modern romance.</p></div>
+      </div>
+      <div class="portrait-cap fade-up" style="--d:1.7s">Color in Bloom — Jewelry Study</div>
+      <div class="grain"></div>
+    </section>
+
+    <!-- 03 MORE IS MORE — cover -->
+    <section class="slide cover" data-title="More is More" data-hold="11.2" data-sound="more">
+      <div class="m4" style="--d:1.2s"><video data-start="1.2" src="assets/model-4-hd-skin-loop.mp4" poster="assets/model-4-hd-skin.jpg" muted loop playsinline preload="auto"></video></div>
+      <div class="wall" aria-hidden="true">
+        <div style="--i:0"><span>MORE MORE MORE MORE MORE MORE MORE MORE MORE MORE MORE MORE&nbsp;</span></div>
+        <div style="--i:1"><span>MORE MORE MORE MORE MORE MORE MORE MORE MORE MORE MORE MORE&nbsp;</span></div>
+        <div style="--i:2"><span>MORE MORE MORE MORE MORE MORE MORE MORE MORE MORE MORE MORE&nbsp;</span></div>
+        <div style="--i:3"><span>MORE MORE MORE MORE MORE MORE MORE MORE MORE MORE MORE MORE&nbsp;</span></div>
+        <div style="--i:4"><span>MORE MORE MORE MORE MORE MORE MORE MORE MORE MORE MORE MORE&nbsp;</span></div>
+      </div>
+      <div class="echo" aria-hidden="true"><i style="--d:2.4s"></i><i style="--d:2.65s"></i><i style="--d:2.9s"></i><i style="--d:3.15s"></i></div>
+      <div class="shade"></div>
+      <div class="callout">
+        <svg viewBox="0 0 1920 1080" aria-hidden="true"><circle cx="1405" cy="300" r="8"/><path d="M1405 300 V200 H1840"/></svg>
+        <b class="fade-up" style="--d:6.2s"><em>Look 02</em>Amethyst Chandelier</b>
+      </div>
+      <div class="topbar"><span class="fade-up" style="--d:.4s">BW/S</span><span class="line"></span><span class="fade-up" style="--d:.6s">New York · SS/27</span></div>
+      <div class="badge" style="--d:6.4s">
+        <svg viewBox="0 0 220 220" aria-hidden="true"><defs><path id="circ" d="M110,110 m-86,0 a86,86 0 1,1 172,0 a86,86 0 1,1 -172,0"/></defs>
+          <text><textPath href="#circ">More is more ✦ Maximalism ✦ SS27 ✦ </textPath></text></svg>
+        <div class="star">✦</div>
+      </div>
+      <div class="title-block">
+        <div class="kicker" style="--d:4.4s"><span>Spring Summer 2027 · The Ornament Edit</span></div>
+        <h1 aria-label="More is more"><span class="rise" data-split="chars" style="--d:4.6s">More</span> <em class="rise" data-split="chars" style="--d:4.9s">is</em> <span class="rise" data-split="chars" style="--d:5.05s">more</span></h1>
+        <div class="sub"><span class="rule"></span><span class="wide track" style="--d:5.4s">Maximalism</span></div>
+      </div>
+      <div class="grain"></div>
+    </section>
+
+    <!-- 04 MAXIMALISM — four codes -->
+    <section class="slide codes" data-title="Maximalism — Four Codes">
+      <div class="head">
+        <div class="kicker" style="--d:.2s"><span>02 · The Language</span></div>
+        <h2 class="rise" data-split="chars" style="--d:.3s">Maximalism</h2>
+        <p class="fade-up" style="--d:.9s">Four codes for SS27</p>
+      </div>
+      <div class="grid">
+        <div class="item fade-up" style="--d:1s"><div class="n">01</div><div class="ln" style="--d:1.1s"></div><h3>Scale</h3><p>Shoulder-grazing chandelier drops. Length and weight as the statement.</p></div>
+        <div class="item fade-up" style="--d:1.15s"><div class="n">02</div><div class="ln" style="--d:1.25s"></div><h3>Saturation</h3><p>Amethyst, emerald and jewel tones at full volume — never diluted.</p></div>
+        <div class="item fade-up" style="--d:1.3s"><div class="n">03</div><div class="ln" style="--d:1.4s"></div><h3>Ornament</h3><p>Baroque goldwork, filigree scrolls and pearl punctuation.</p></div>
+        <div class="item fade-up" style="--d:1.45s"><div class="n">04</div><div class="ln" style="--d:1.55s"></div><h3>Collision</h3><p>Heirloom craft styled against futurist visors and glossy silk charmeuse.</p></div>
+      </div>
+      <div class="e4"><video src="assets/earring-4.mp4" poster="assets/earring-4.jpg" muted loop playsinline preload="auto"></video></div>
+      <div class="portrait-cap fade-up" style="--d:1.6s">Amethyst Chandelier — Detail</div>
+      <div class="grain"></div>
+    </section>
+
+    <!-- 05 THE ART OF FORM — chapter cover -->
+    <section class="slide form" data-title="The Art of Form" data-hold="10.5" data-sound="form">
+      <div class="m5"><video src="assets/model-5-fast.mp4" poster="assets/model-5-fast.jpg" muted loop playsinline preload="auto"></video></div>
+      <div class="cols" aria-hidden="true"><i style="--i:0"></i><i style="--i:1"></i><i style="--i:2"></i><i style="--i:3"></i><i style="--i:4"></i><i style="--i:5"></i></div>
+      <div class="veil"></div>
+      <div class="callout">
+        <svg viewBox="0 0 1920 1080" aria-hidden="true"><circle cx="516" cy="700" r="8"/><path d="M516 700 V935 H80" pathLength="1"/></svg>
+        <b class="fade-up" style="--d:6.4s"><em>Look 03</em>— Sculptural Gold</b>
+      </div>
+      <div class="topbar"><span class="fade-up" style="--d:.4s">BW/S</span><span class="line"></span><span class="fade-up" style="--d:.6s">New York · SS/27</span></div>
+      <div class="badge" style="--d:5.6s">
+        <svg viewBox="0 0 220 220" aria-hidden="true"><defs><path id="circ3" d="M110,110 m-86,0 a86,86 0 1,1 172,0 a86,86 0 1,1 -172,0"/></defs>
+          <text><textPath href="#circ3">The art of form ✦ Sculptural ✦ SS27 ✦ </textPath></text></svg>
+        <div class="star">✦</div>
+      </div>
+      <div class="title-block">
+        <div class="kicker" style="--d:3.4s"><span>Spring Summer 2027 · The Sculptural Edit</span></div>
+        <h1 aria-label="The art of form"><span class="rise" data-split="chars" style="--d:3.6s">The art</span><br><span class="rise" data-split="chars" style="--d:3.95s">of</span> <em class="rise" data-split="chars" style="--d:4.15s">form</em></h1>
+        <div class="sub"><span class="wide track" style="--d:4.8s">Sculptural Essentials</span><span class="rule"></span></div>
+        <p class="tagline fade-up" style="--d:5.3s">Where metal becomes movement.</p>
+      </div>
+      <div class="grain"></div>
+    </section>
+
+    <!-- 06 SCULPTURAL ESSENTIALS — four codes, slide 4 format -->
+    <section class="slide codes sculpt" data-title="Sculptural Essentials">
+      <div class="vg"><video src="assets/vintage-gold-wide-8s.mp4" poster="assets/vintage-gold-wide-8s.jpg" muted loop playsinline preload="auto"></video></div>
+      <div class="head">
+        <div class="kicker" style="--d:.2s"><span>02 · The Language</span></div>
+        <h2 aria-label="Sculptural Essentials"><span class="rise" data-split="chars" style="--d:.3s">Sculptural</span><br><span class="rise" data-split="chars" style="--d:.5s">Essentials</span></h2>
+        <p class="fade-up" style="--d:1s">Four codes for SS27</p>
+      </div>
+      <div class="grid">
+        <div class="item fade-up" style="--d:1.1s"><div class="n">01</div><div class="ln" style="--d:1.2s"></div><h3>Organicity</h3><p>Molten contours and irregular surfaces. Metal shaped by nature, not geometry.</p></div>
+        <div class="item fade-up" style="--d:1.25s"><div class="n">02</div><div class="ln" style="--d:1.35s"></div><h3>Volume</h3><p>Bold cuffs and oversized silhouettes. Presence defined by scale and proportion.</p></div>
+        <div class="item fade-up" style="--d:1.4s"><div class="n">03</div><div class="ln" style="--d:1.5s"></div><h3>Fluidity</h3><p>Continuous curves and liquid forms. A sense of movement captured in solid metal.</p></div>
+        <div class="item fade-up" style="--d:1.55s"><div class="n">04</div><div class="ln" style="--d:1.65s"></div><h3>Balance</h3><p>Statement-making yet wearable. Sculptural expression refined for everyday style.</p></div>
+      </div>
+      <div class="portrait-cap fade-up" style="--d:1.7s">Sculptural Gold — Design Study</div>
+      <div class="grain"></div>
+    </section>
+
+  </div>
+  <div class="hud"><button id="prev" aria-label="Previous slide">‹</button><span id="count">01 / 02</span><button id="next" aria-label="Next slide">›</button><button id="snd" aria-label="Sound (M)">♪</button><button id="fs" aria-label="Present (F)" title="Present (F)">⤢</button></div>
+  <div class="progress" id="progress"></div>
+</main>
+
+<script>
+(() => {
+  const canvas = document.getElementById('canvas');
+  const stage = document.getElementById('stage');
+  const rail = document.getElementById('rail');
+  const slides = [...canvas.querySelectorAll('.slide')];
+  const pad = n => String(n).padStart(2, '0');
+
+  // Split text into animatable pieces
+  document.querySelectorAll('[data-split]').forEach(el => {
+    const byChars = el.dataset.split === 'chars';
+    const words = el.textContent.trim().split(/\s+/);
+    el.textContent = '';
+    let i = 0;
+    words.forEach((w, wi) => {
+      const ws = document.createElement('span');
+      ws.className = 'w'; ws.setAttribute('aria-hidden', 'true');
+      (byChars ? [...w] : [w]).forEach(t => {
+        const c = document.createElement('span');
+        c.className = 'c'; c.textContent = t; c.style.setProperty('--i', i++);
+        ws.appendChild(c);
+      });
+      el.appendChild(ws);
+      if (wi < words.length - 1) el.appendChild(document.createTextNode(' '));
+    });
+  });
+
+  // Build sidebar previews (static clones, videos swapped for posters)
+  const thumbs = slides.map((s, idx) => {
+    const btn = document.createElement('button');
+    btn.className = 'thumb';
+    btn.setAttribute('aria-label', `Slide ${idx + 1}: ${s.dataset.title}`);
+    const frame = document.createElement('div');
+    frame.className = 'thumb-frame';
+    const clone = s.cloneNode(true);
+    clone.classList.remove('active');
+    clone.setAttribute('aria-hidden', 'true');
+    clone.querySelectorAll('video').forEach(v => {
+      const img = document.createElement('img');
+      img.className = 'vid'; img.src = v.getAttribute('poster'); img.alt = '';
+      v.replaceWith(img);
+    });
+    clone.querySelectorAll('.grain, .marquee').forEach(n => n.remove());
+    frame.appendChild(clone);
+    btn.innerHTML = `<span class="thumb-num">${pad(idx + 1)}</span>`;
+    btn.appendChild(frame);
+    btn.addEventListener('click', () => go(idx));
+    rail.appendChild(btn);
+    return btn;
+  });
+  // carry each video's object-position over to its poster in the preview
+  requestAnimationFrame(() => thumbs.forEach((t, i) => {
+    const src = slides[i].querySelectorAll('video');
+    t.querySelectorAll('img.vid').forEach((img, k) => img.style.objectPosition = getComputedStyle(src[k]).objectPosition);
+  }));
+
+  // Cover sound: an ambient pad loops gaplessly under the cover,
+  // whooshes follow the type wall and the earring reveal, and a low hit lands with the title.
+  // Web Audio needs http(s); opened as a local file it falls back to <audio> elements.
+  const sound = (() => {
+    const btn = document.getElementById('snd');
+    const DIR = 'assets/audio/';
+    // one sound profile per cover (section data-sound). sync = slide time at which the loop's 0s plays;
+    // each cover holds at its data-hold time, and the loop fade starts early enough to finish (button off) on that frame
+    const PROFILES = {
+      // More is more: ambient pad starts with the clip at 1.2s
+      more: { loop: 'ambient-loop', vol: .7, rampIn: 3, sync: 1.2, cues: [['whoosh', .1, .7], ['whoosh', 1.2, .8], ['title-hit', 4.6, .9]] },
+      // The Art of Form: brushed jazz trio; bar 3 (Fmaj9) lands with the title at 3.6s, where the chord hit doubles it
+      form: { loop: 'jazz-loop', vol: .42, rampIn: 1.6, sync: -.4, cues: [['brush-sweep', .4, .75], ['form-hit', 3.6, .7]] },
+      // Garden of Whimsy: 3/4 spring waltz (music box, harp, strings, birds); the harp glissando rises as the flower mask opens,
+      // and bar 3 (Gmaj7) lands with the title at 3.6s under the chime bloom
+      bloom: { loop: 'bloom-loop', vol: .5, rampIn: 1.4, sync: -.4, cues: [['harp-gliss', .95, .7], ['bloom-hit', 3.6, .75]] }
+    };
+    const FADE = 2.5;
+    const AC = window.AudioContext || window.webkitAudioContext;
+    let muted = false, enteredAt = null, timers = [], P = PROFILES.bloom, AUTO_OFF = 0;
+    const elapsed = () => (performance.now() - enteredAt) / 1000;
+
+    // Web Audio path
+    const ctx = AC && location.protocol.startsWith('http') ? new AC() : null;
+    const master = ctx && ctx.createGain();
+    const buffers = {};
+    let live = [], amb = null;
+    if (ctx) {
+      master.connect(ctx.destination);
+      Promise.all(['ambient-loop', 'whoosh', 'title-hit', 'jazz-loop', 'brush-sweep', 'form-hit', 'bloom-loop', 'harp-gliss', 'bloom-hit'].map(n =>
+        fetch(DIR + n + '.wav').then(r => r.arrayBuffer()).then(b => ctx.decodeAudioData(b)).then(buf => { buffers[n] = buf; })
+      )).then(schedule).catch(() => {});
+      ctx.onstatechange = () => { hint(); schedule(); };
+    }
+    function play(name, when, gain, loop, offset) {
+      const src = ctx.createBufferSource();
+      src.buffer = buffers[name]; src.loop = !!loop;
+      const g = ctx.createGain(); g.gain.value = gain;
+      src.connect(g).connect(master);
+      src.start(when, offset || 0);
+      live.push(src);
+      return g;
+    }
+    function schedule() {
+      if (enteredAt === null) return;
+      if (!ctx) return scheduleFallback();
+      if (ctx.state !== 'running' || live.length || !buffers[P.loop] || P.cues.some(c => !buffers[c[0]])) return;
+      const now = ctx.currentTime, e = elapsed(), L = buffers[P.loop].duration;
+      P.cues.forEach(([n, t, g]) => { if (t >= e) play(n, now + t - e, g); });
+      amb = play(P.loop, now, 0, true, ((e - P.sync) % L + L) % L);
+      amb.gain.setValueAtTime(0, now);
+      amb.gain.linearRampToValueAtTime(P.vol, now + P.rampIn);
+    }
+
+    // <audio> fallback (file://): same cues, looping via the element's own loop
+    const els = {};
+    function el(name) { return els[name] || (els[name] = new Audio(DIR + name + '.wav')); }
+    let fbStarted = false;
+    function scheduleFallback() {
+      if (fbStarted) return;
+      const a = el(P.loop);
+      a.loop = true; a.volume = muted ? 0 : P.vol;
+      a.play().then(() => {
+        fbStarted = true; hint(false);
+        const e = elapsed();
+        P.cues.forEach(([n, t, g]) => {
+          if (t >= e) timers.push(setTimeout(() => { const c = el(n).cloneNode(); c.volume = muted ? 0 : g; c.play().catch(() => {}); }, (t - e) * 1000));
+        });
+      }).catch(() => hint(true));
+    }
+
+    function hint(blocked) {
+      const off = blocked !== undefined ? blocked : (ctx ? ctx.state !== 'running' : !fbStarted);
+      btn.classList.toggle('hint', off && !muted);
+      btn.classList.toggle('muted', muted);
+      btn.title = muted ? 'Sound off (M)' : off ? 'Click to enable sound' : 'Sound on (M)';
+    }
+    function unlock() { if (ctx && ctx.state !== 'running') ctx.resume(); else schedule(); }
+    ['pointerdown', 'keydown'].forEach(t => document.addEventListener(t, unlock));
+    btn.addEventListener('click', e => {
+      e.stopPropagation();
+      if (btn.classList.contains('hint')) { unlock(); return; }
+      toggle();
+    });
+    function autoOff() {
+      if (muted || enteredAt === null) return;
+      if (ctx && amb) {
+        const now = ctx.currentTime;
+        amb.gain.cancelScheduledValues(now);
+        amb.gain.setValueAtTime(amb.gain.value, now);
+        amb.gain.linearRampToValueAtTime(0, now + FADE);
+      } else if (els[P.loop]) {
+        const a = els[P.loop], v0 = a.volume, t0 = performance.now();
+        const step = () => { const k = Math.min(1, (performance.now() - t0) / (FADE * 1000)); a.volume = v0 * (1 - k); if (k < 1 && !muted) requestAnimationFrame(step); };
+        requestAnimationFrame(step);
+      }
+      timers.push(setTimeout(() => { if (!muted) toggle(); }, FADE * 1000));
+    }
+    function toggle() {
+      muted = !muted;
+      if (master) master.gain.setTargetAtTime(muted ? 0 : 1, ctx.currentTime, .1);
+      if (!muted && amb) { const now = ctx.currentTime; amb.gain.cancelScheduledValues(now); amb.gain.setValueAtTime(amb.gain.value, now); amb.gain.linearRampToValueAtTime(P.vol, now + 1); }
+      if (els[P.loop]) els[P.loop].volume = muted ? 0 : P.vol;
+      hint();
+    }
+    // The sound button defaults to ON for every slide: entering a cover (or leaving one) resets it to on,
+    // even if the previous cover's hold switched it off. It goes off only when that cover's motion stops (autoOff),
+    // or when the viewer presses it / M.
+    function resetOn(audible) {
+      muted = false;
+      if (master && audible) { const now = ctx.currentTime; master.gain.cancelScheduledValues(now); master.gain.setValueAtTime(1, now); }
+      hint();
+    }
+    hint();
+    return {
+      toggle,
+      enter(name, holdAt) {
+        P = PROFILES[name]; AUTO_OFF = holdAt - FADE;
+        resetOn(true);
+        enteredAt = performance.now(); schedule(); timers.push(setTimeout(autoOff, AUTO_OFF * 1000));
+      },
+      leave() {
+        enteredAt = null;
+        timers.forEach(clearTimeout); timers = [];
+        if (ctx) {
+          const now = ctx.currentTime;
+          if (amb) { amb.gain.cancelScheduledValues(now); amb.gain.setTargetAtTime(0, now, .2); }
+          live.forEach(s => s.stop(now + 1)); live = []; amb = null;
+        } else if (els[P.loop]) { els[P.loop].pause(); els[P.loop].currentTime = 0; fbStarted = false; }
+        // button shows ON again; the master stays where it is so a muted tail of the old cover stays silent
+        // (the next cover's enter() raises it)
+        resetOn(false);
+      }
+    };
+  })();
+
+  // Cover hold: each cover's layout settles, and 3s later (data-hold) the clip and all motion stop on that frame.
+  // Garden of Whimsy settles ≈7.5s (look label) → 10.5s; More is more ≈8.2s → 11.2s; The Art of Form ≈7.5s → 10.5s.
+  const coverHold = (() => {
+    let t = null, slide = null;
+    function hold() {
+      slide.classList.add('frozen');
+      slide.querySelectorAll('video').forEach(v => { clearTimeout(v._t); v.pause(); });
+    }
+    return {
+      start(s) { slide = s; s.classList.remove('frozen'); clearTimeout(t); t = setTimeout(hold, parseFloat(s.dataset.hold) * 1000); },
+      stop(s) { clearTimeout(t); s.classList.remove('frozen'); }
+    };
+  })();
+
+  let cur = -1;
+  function go(n) {
+    n = Math.max(0, Math.min(slides.length - 1, n));
+    if (n === cur) return;
+    if (cur >= 0) {
+      slides[cur].classList.remove('active');
+      slides[cur].querySelectorAll('video').forEach(v => { clearTimeout(v._t); v.pause(); });
+      if (slides[cur].dataset.hold) { sound.leave(); coverHold.stop(slides[cur]); }
+      thumbs[cur].classList.remove('on');
+    }
+    cur = n;
+    const s = slides[cur];
+    void s.offsetWidth; // restart CSS animations
+    s.classList.add('active');
+    if (s.dataset.hold) { sound.enter(s.dataset.sound, parseFloat(s.dataset.hold)); coverHold.start(s); }
+    s.querySelectorAll('video').forEach(v => {
+      try { v.currentTime = parseFloat(v.dataset.offset || 0); } catch (e) {}
+      // cover clips start as their panel enters
+      const start = parseFloat(v.dataset.start || 0) * 1000;
+      clearTimeout(v._t);
+      if (start) { v.pause(); v._t = setTimeout(() => v.play().catch(() => {}), start); }
+      else v.play().catch(() => {});
+    });
+    thumbs[cur].classList.add('on');
+    thumbs[cur].scrollIntoView({ block: 'nearest', inline: 'nearest' });
+    document.getElementById('count').textContent = `${pad(cur + 1)} / ${pad(slides.length)}`;
+    document.getElementById('progress').style.width = `${((cur + 1) / slides.length) * 100}%`;
+    history.replaceState(null, '', `#${cur + 1}`);
+  }
+
+  function fit() {
+    const r = stage.getBoundingClientRect();
+    const m = document.body.classList.contains('present') ? 0 : 48;
+    const k = Math.min((r.width - m) / 1920, (r.height - m) / 1080);
+    canvas.style.transform = `translate(-50%, -50%) scale(${k})`;
+    if (window.innerWidth <= 760) stage.style.height = `${1080 * k + m}px`; else stage.style.height = '';
+  }
+  function togglePresent() {
+    document.body.classList.toggle('present');
+    if (document.body.classList.contains('present')) document.documentElement.requestFullscreen?.().catch(() => {});
+    else if (document.fullscreenElement) document.exitFullscreen();
+    fit();
+  }
+  document.addEventListener('fullscreenchange', () => {
+    if (!document.fullscreenElement) document.body.classList.remove('present');
+    fit();
+  });
+
+  document.getElementById('prev').onclick = () => go(cur - 1);
+  document.getElementById('next').onclick = () => go(cur + 1);
+  document.getElementById('fs').onclick = togglePresent;
+  document.addEventListener('keydown', e => {
+    if (['ArrowRight', 'ArrowDown', 'PageDown', ' ', 'Enter'].includes(e.key)) { e.preventDefault(); go(cur + 1); }
+    else if (['ArrowLeft', 'ArrowUp', 'PageUp', 'Backspace'].includes(e.key)) { e.preventDefault(); go(cur - 1); }
+    else if (e.key === 'Home') go(0);
+    else if (e.key === 'End') go(slides.length - 1);
+    else if (e.key === 'f' || e.key === 'F') togglePresent();
+    else if (e.key === 'm' || e.key === 'M') sound.toggle();
+  });
+  canvas.addEventListener('click', e => {
+    const r = canvas.getBoundingClientRect();
+    go(cur + (e.clientX - r.left < r.width * .3 ? -1 : 1));
+  });
+  window.addEventListener('resize', fit);
+
+  fit();
+  go((parseInt(location.hash.slice(1), 10) || 1) - 1);
+})();
+</script>
+</body>
+</html>

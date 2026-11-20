@@ -1,0 +1,146 @@
+/* AI Product Design page (02): black ground, two auto-scrolling image strips (AI DESIGN, SPEC DESIGN), click an image to
+   open it large in a viewer with left / right chevrons. */
+:root {
+  --bg: #000000;
+  --ink: #f4efe9;
+  --muted: rgba(244, 239, 233, 0.56);
+  --line: rgba(244, 239, 233, 0.16);
+  --gutter: clamp(16px, 4.2vw, 60px);
+  --row-h: clamp(220px, 27vw, 420px);
+  --gap: clamp(10px, 1.1vw, 18px);
+  --font: "Helvetica Neue", Helvetica, Arial, "Apple SD Gothic Neo", "Malgun Gothic", sans-serif;
+}
+*, *::before, *::after { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; background: var(--bg); }
+body { margin: 0; background: var(--bg); color: var(--ink); font-family: var(--font); -webkit-font-smoothing: antialiased; }
+a { color: inherit; text-decoration: none; }
+img { display: block; }
+h1, h2, p { margin: 0; font-weight: 400; }
+button { font: inherit; color: inherit; }
+.visually-hidden { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+
+/* ---------- top ---------- */
+.page-head {
+  display: flex; align-items: center; justify-content: space-between; gap: 24px;
+  padding: 26px var(--gutter) 0;
+}
+.back {
+  display: inline-flex; align-items: center; gap: 10px;
+  font-size: 12px; letter-spacing: 0.22em; color: var(--muted); transition: color 0.25s ease;
+}
+.back:hover, .back:focus-visible { color: var(--ink); }
+.back svg { width: 16px; height: 16px; fill: none; stroke: currentColor; stroke-width: 1.4; }
+.page-mark { font-size: 12px; letter-spacing: 0.22em; color: var(--muted); }
+
+.intro { padding: clamp(56px, 8vw, 120px) var(--gutter) clamp(24px, 3vw, 44px); }
+.intro-kicker { font-size: 12px; letter-spacing: 0.3em; color: var(--muted); }
+.intro h1 {
+  margin-top: 18px; font-size: clamp(34px, 5.4vw, 84px); line-height: 1.02; letter-spacing: 0.04em; font-weight: 300;
+}
+.intro-text { margin-top: 20px; max-width: 46em; font-size: clamp(14px, 1.05vw, 17px); line-height: 1.7; color: var(--muted); }
+
+/* ---------- strips ---------- */
+.strip-section { padding: clamp(40px, 5vw, 80px) 0 clamp(28px, 3vw, 48px); border-top: 1px solid var(--line); margin: 0; }
+.strip-section + .strip-section { margin-top: clamp(16px, 2vw, 32px); }
+.strip-head {
+  display: flex; align-items: baseline; justify-content: space-between; gap: 24px;
+  padding: 0 var(--gutter) clamp(20px, 2.2vw, 34px);
+}
+.strip-head h2 { font-size: clamp(22px, 2.3vw, 36px); letter-spacing: 0.14em; font-weight: 400; }
+.strip-head h2 span { display: inline-block; margin-right: 0.9em; font-size: 0.42em; letter-spacing: 0.24em; color: var(--muted); vertical-align: 0.5em; }
+.strip-sub { margin-top: 10px; font-size: 13px; line-height: 1.6; color: var(--muted); }
+.strip-count { font-size: 12px; letter-spacing: 0.22em; color: var(--muted); white-space: nowrap; }
+
+.strip { position: relative; }
+.strip-viewport { overflow: hidden; cursor: grab; touch-action: pan-y; }
+.strip-viewport.is-dragging { cursor: grabbing; }
+.strip-track { display: flex; gap: var(--gap); width: max-content; will-change: transform; }
+.shot {
+  flex: none; height: var(--row-h); padding: 0; border: 0; background: #111; border-radius: 10px; overflow: hidden;
+  cursor: zoom-in; position: relative;
+}
+.shot img {
+  height: 100%; width: auto; user-select: none; -webkit-user-drag: none; pointer-events: none;
+  transition: transform 0.6s cubic-bezier(.2,.7,.2,1), filter 0.4s ease;
+}
+.shot::after { content: ""; position: absolute; inset: 0; border-radius: inherit; box-shadow: inset 0 0 0 1px rgba(255,255,255,0.06); pointer-events: none; }
+.shot:hover img { transform: scale(1.035); }
+.shot:focus-visible { outline: 2px solid var(--ink); outline-offset: 3px; }
+
+/* the round arrows on the strip ends */
+.strip-arrow {
+  position: absolute; top: 50%; z-index: 2; width: 46px; height: 46px; margin-top: -23px;
+  display: grid; place-items: center; border: 1px solid rgba(244,239,233,0.4); border-radius: 50%;
+  background: rgba(0,0,0,0.45); -webkit-backdrop-filter: blur(6px); backdrop-filter: blur(6px);
+  cursor: pointer; opacity: 0.75; transition: opacity 0.25s ease, background 0.25s ease;
+}
+.strip-arrow:hover, .strip-arrow:focus-visible { opacity: 1; background: rgba(0,0,0,0.7); }
+.strip-arrow svg { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 1.5; }
+.strip-arrow--prev { left: calc(var(--gutter) * 0.5); }
+.strip-arrow--next { right: calc(var(--gutter) * 0.5); }
+
+.page-foot {
+  display: flex; justify-content: space-between; gap: 24px; flex-wrap: wrap;
+  padding: clamp(56px, 7vw, 110px) var(--gutter) 40px; font-size: 12px; letter-spacing: 0.22em; color: var(--muted);
+}
+
+/* ---------- viewer ---------- */
+.viewer {
+  position: fixed; inset: 0; z-index: 50; display: grid; place-items: center;
+  background: rgba(0,0,0,0.94); opacity: 0; visibility: hidden; transition: opacity 0.3s ease, visibility 0s 0.3s;
+}
+.viewer.is-open { opacity: 1; visibility: visible; transition: opacity 0.3s ease; }
+.viewer-figure { --pad-x: 96px; --pad-top: 64px; --pad-bottom: 72px; margin: 0; display: grid; place-items: center; width: 100%; height: 100%; padding: var(--pad-top) var(--pad-x) var(--pad-bottom); touch-action: pan-y; }
+/* fit the whole image inside the screen, between the chevrons and above the counter */
+.viewer-img {
+  max-width: calc(100vw - 2 * var(--pad-x));
+  max-height: calc(100vh - var(--pad-top) - var(--pad-bottom)); max-height: calc(100dvh - var(--pad-top) - var(--pad-bottom));
+  width: auto; height: auto; object-fit: contain; border-radius: 6px;
+  opacity: 0; transform: scale(0.97); transition: opacity 0.35s ease, transform 0.45s cubic-bezier(.2,.7,.2,1);
+}
+.viewer.is-open .viewer-img.is-ready { opacity: 1; transform: none; }
+/* wheel zoom (ai-design.js, 100% to 400%): the frame keeps the fitted size and clips the zoomed image; once zoomed the
+   cursor over it is an open hand, and the left button drags it (closed hand while dragging) */
+.viewer-frame { position: relative; overflow: hidden; border-radius: 6px; line-height: 0; }
+.viewer-img { user-select: none; -webkit-user-drag: none; }
+.viewer.is-zoomed .viewer-img { transition: opacity 0.35s ease, transform 0.12s ease-out; }
+.viewer.is-zoomed .viewer-frame { cursor: grab; touch-action: none; }
+.viewer.is-panning, .viewer.is-panning * { cursor: grabbing !important; }
+.viewer.is-panning .viewer-img { transition: opacity 0.35s ease; }
+.viewer-btn {
+  position: absolute; display: grid; place-items: center; border: 0; background: none; cursor: pointer;
+  color: rgba(244,239,233,0.7); transition: color 0.2s ease;
+}
+.viewer-btn:hover, .viewer-btn:focus-visible { color: #fff; }
+.viewer-btn:focus-visible { outline: 1px solid currentColor; outline-offset: 2px; }
+.viewer-btn svg { fill: none; stroke: currentColor; stroke-linecap: round; stroke-linejoin: round; }
+.viewer-prev, .viewer-next { top: 50%; width: 72px; height: 120px; margin-top: -60px; }
+.viewer-prev svg, .viewer-next svg { width: 34px; height: 34px; stroke-width: 1.3; }
+.viewer-prev { left: 12px; }
+.viewer-next { right: 12px; }
+.viewer-close { top: 14px; right: 16px; width: 48px; height: 48px; }
+.viewer-close svg { width: 24px; height: 24px; stroke-width: 1.3; }
+/* the line under the image: page number and the hint, centred as one line; 7% larger than the 12 px page type
+   (the strip name stays for screen readers only) */
+.viewer-meta {
+  position: absolute; left: 0; right: 0; bottom: 24px; display: flex; justify-content: center; align-items: baseline;
+  gap: 1.8em; margin: 0; padding: 0 16px; text-align: center;
+  font-size: 12.84px; letter-spacing: 0.22em; color: var(--muted); white-space: nowrap; pointer-events: none;
+}
+.viewer-label { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+.viewer-count, .viewer-hint { margin-right: -0.22em; } /* no trailing letter-space, so the line sits truly centred */
+.viewer-hint { color: rgba(244, 239, 233, 0.4); }
+@media (hover: none) { .viewer-hint { display: none; } }
+
+@media (max-width: 640px) {
+  .page-mark { display: none; }
+  .strip-head { flex-direction: column; gap: 8px; }
+  .strip-arrow { width: 38px; height: 38px; margin-top: -19px; }
+  .viewer-figure { --pad-x: 12px; --pad-top: 56px; --pad-bottom: 64px; }
+  .viewer-prev, .viewer-next { width: 48px; height: 96px; margin-top: -48px; }
+  .viewer-prev { left: 0; } .viewer-next { right: 0; }
+  .viewer-prev svg, .viewer-next svg { width: 26px; height: 26px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .shot img, .viewer-img { transition: none; }
+}

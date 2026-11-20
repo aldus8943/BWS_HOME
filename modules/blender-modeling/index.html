@@ -1,0 +1,89 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="theme-color" content="#e9e2d5" />
+  <title>Sculptural Essentials — The Art Of Form</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@400;500;600;700&display=swap" />
+  <!-- 03 · Blender Interactive Modeling. The FINAL build sits unchanged in app/ (4 files, identical to the verified
+       2026-11-18 build); this page shows it full-window and adds only a "‹ MAIN" link at the start of the viewer's
+       bottom hint row ("✣ DRAG TO ROTATE • SCROLL TO ZOOM"), in that row's type. The row is pushed right to make room
+       by a style added to the viewer at run time; place and type are read from the viewer, so they follow every size. -->
+  <style>
+    html, body { height: 100%; margin: 0; background: #e9e2d5; overflow: hidden; }
+    .app { position: fixed; inset: 0; width: 100%; height: 100%; border: 0; display: block; background: #e9e2d5; }
+    .main-link {
+      position: fixed; z-index: 2; top: 0; left: 0; transform: translateY(-50%); visibility: hidden;
+      display: inline-flex; align-items: center; gap: 0.55em; padding: 8px 0; white-space: nowrap;
+      font: 700 12px/1 "DM Sans", Arial, sans-serif; letter-spacing: 0.12em; color: #4c463e; text-decoration: none;
+      transition: color 0.2s ease;
+    }
+    .main-link.is-placed { visibility: visible; }
+    .main-link svg { width: 1.2em; height: 1.2em; fill: none; stroke: currentColor; stroke-width: 1.7; }
+    .main-link:hover, .main-link:focus-visible { color: #a07034; outline: none; }
+    .main-link:focus-visible { box-shadow: 0 1px 0 currentColor; }
+    html.app-fullscreen .main-link { display: none; }
+  </style>
+</head>
+<body>
+  <iframe class="app" src="./app/index.html" title="Sculptural Essentials: the Art of Form gold cuff, interactive 3D viewer" allow="fullscreen" allowfullscreen></iframe>
+  <a class="main-link" href="../../index.html" aria-label="Main page"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M12.5 4 6.5 10l6 6" /></svg>MAIN</a>
+  <script>
+    (() => {
+      const frame = document.querySelector('.app');
+      const link = document.querySelector('.main-link');
+      const GAP_EM = 2.2; // space between MAIN and the pushed hint row, in the row's font size
+      const blockZoom = e => { if (e.ctrlKey) e.preventDefault(); };
+      window.addEventListener('wheel', blockZoom, { passive: false });
+      frame.addEventListener('load', () => {
+        let doc, win;
+        try { doc = frame.contentDocument; win = frame.contentWindow; } catch { link.classList.add('is-placed'); link.style.left = '24px'; link.style.top = 'calc(100% - 40px)'; return; }
+        win.addEventListener('wheel', blockZoom, { passive: false });
+        const push = doc.createElement('style');
+        push.id = 'portfolio-main-room';
+        doc.head.appendChild(push);
+        // MAIN takes the row's place and type; the row moves right by MAIN's width plus a gap
+        const place = () => {
+          const hint = doc.querySelector('.gesture-hint');
+          if (!hint) return false;
+          const hs = win.getComputedStyle(hint);
+          link.style.fontSize = hs.fontSize; link.style.letterSpacing = hs.letterSpacing;
+          link.style.fontWeight = hs.fontWeight; link.style.fontFamily = hs.fontFamily;
+          const room = Math.ceil(link.getBoundingClientRect().width + GAP_EM * parseFloat(hs.fontSize));
+          push.textContent = `.gesture-hint{padding-left:${room}px}`;
+          const r = hint.getBoundingClientRect(), icon = hint.querySelector('.gesture-icon');
+          // does the pushed row still fit? (narrow screens: no — then MAIN goes to the right end of the top bar)
+          const text = doc.createRange(); text.selectNodeContents(hint);
+          const fits = text.getBoundingClientRect().right <= Math.min(r.right, win.innerWidth) + 0.5;
+          if (fits) {
+            const ir = (icon || hint).getBoundingClientRect();
+            link.style.left = `${r.left}px`;
+            link.style.top = `${(ir.top + ir.bottom) / 2}px`;
+          } else {
+            push.textContent = '';
+            const header = doc.querySelector('.site-header'), mark = doc.querySelector('.wordmark');
+            const hr = header.getBoundingClientRect(), mr = mark.getBoundingClientRect();
+            const pr = parseFloat(win.getComputedStyle(header).paddingRight) || 20;
+            link.style.left = `${hr.right - pr - link.getBoundingClientRect().width}px`;
+            link.style.top = `${(mr.top + mr.bottom) / 2}px`;
+          }
+          link.classList.add('is-placed');
+          return true;
+        };
+        // the viewer is a React app: wait for the row, then follow resizes, scrolling inside it, fonts and full screen
+        const tryPlace = () => { if (!place()) requestAnimationFrame(tryPlace); };
+        tryPlace();
+        win.addEventListener('resize', place);
+        win.addEventListener('scroll', place, { passive: true });
+        new win.ResizeObserver(place).observe(doc.body);
+        doc.addEventListener('fullscreenchange', () => document.documentElement.classList.toggle('app-fullscreen', !!doc.fullscreenElement));
+        doc.fonts && doc.fonts.ready.then(place);
+        document.fonts && document.fonts.ready.then(place);
+      });
+    })();
+  </script>
+</body>
+</html>
