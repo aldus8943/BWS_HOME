@@ -19,10 +19,9 @@
     <button class="menu-toggle" type="button" aria-expanded="false" aria-controls="works-menu" aria-label="Open the works menu">
       <span class="menu-lines" aria-hidden="true"><span></span><span></span></span>
     </button>
-    <!-- FOR BW/S: will open the profile and technical-spec page. That page is not built yet, so the button has no href
-         for now (add href="…" here when the page exists; it then becomes a normal link). Light version over the hero,
+    <!-- FOR BW/S: opens the contribution page, modules/contribution (since 2026-11-21). Light version over the hero,
          dark version over the cards (html.bring-on-dark, assets/home.js). -->
-    <a class="bring-link" aria-disabled="true" aria-label="For BW/S: strategic contribution">
+    <a class="bring-link" href="./modules/contribution/index.html" aria-label="For BW/S: strategic contribution">
       <span class="bring-main" aria-hidden="true">FOR BW/S<svg class="bring-arrow" viewBox="0 0 20 20"><path d="M4 16 16 4M7.5 4H16v8.5" /></svg></span>
       <span class="bring-sub" aria-hidden="true">STRATEGIC CONTRIBUTION</span>
     </a>
@@ -45,7 +44,7 @@
         <li style="--i:5"><a class="menu-item" href="./modules/garden-of-whimsy/index.html">Immersive Experience</a></li>
         <li style="--i:6"><a class="menu-item" href="./modules/cinematic-storytelling/index.html">AI Cinematic Storytelling</a></li>
         <li style="--i:7"><a class="menu-item" href="./modules/games/index.html">Games</a></li>
-        <li style="--i:8"><span class="menu-item">Strategic Contribution</span></li>
+        <li style="--i:8"><a class="menu-item" href="./modules/contribution/index.html">Strategic Contribution</a></li>
       </ol>
     </div>
   </div>
@@ -159,10 +158,10 @@
           </div>
         </a>
       </li>
-      <!-- 07 · Strategic Contribution (no link). Section image H07 carries its own typography, so the HTML copy below
-           stays for screen readers only (.card--artwork). -->
+      <!-- 07 · Strategic Contribution: opens modules/contribution (since 2026-11-21). Section image H07 carries its own
+           typography, so the HTML copy below stays for screen readers only (.card--artwork). -->
       <li>
-        <a class="card card--artwork is-pending" aria-disabled="true">
+        <a class="card card--artwork" href="./modules/contribution/index.html">
           <img class="media" src="./assets/images/H07_2000x894.webp"
             srcset="./assets/images/H07_2000x894.webp 2000w, ./assets/images/H07_3840x1716.webp 3840w" sizes="100vw"
             width="3840" height="1716" loading="lazy" decoding="async"
@@ -186,7 +185,7 @@
       <li><a href="./modules/garden-of-whimsy/index.html"><span>04</span> Immersive Experience</a></li>
       <li><a href="./modules/cinematic-storytelling/index.html"><span>05</span> AI Cinematic Storytelling</a></li>
       <li><a href="./modules/games/index.html"><span>06</span> Games</a></li>
-      <li><span>07</span> Strategic Contribution</li>
+      <li><a href="./modules/contribution/index.html"><span>07</span> Strategic Contribution</a></li>
     </ol>
     <p class="footer-note">SS27 · ROMANTIC DETAILS · FINAL SUBMISSION</p>
   </footer>

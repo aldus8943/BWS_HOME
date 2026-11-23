@@ -1,4 +1,4 @@
-import{H as c,a as f}from"./index-DBnVynew.js";import"./three-BW246XVu.js";function b(r){const e={...c,compare:!1,hover:!1,opening:0};window.__peonyTune=e;const s=[["warmth","Petal warmth (champagne · peach)",0,1,.01],["shadow","Petal shadow depth",0,1,.01],["blush","Inner blush",0,1,.01],["glow","Glow strength",0,1.5,.01],["halo","Background halo",0,1.5,.01]],t=document.createElement("div");t.id="peony-tuner",t.innerHTML=`
+import{H as c,a as f}from"./index-LCeuZMDZ.js";import"./three-BW246XVu.js";function b(r){const e={...c,compare:!1,hover:!1,opening:0};window.__peonyTune=e;const s=[["warmth","Petal warmth (champagne · peach)",0,1,.01],["shadow","Petal shadow depth",0,1,.01],["blush","Inner blush",0,1,.01],["glow","Glow strength",0,1.5,.01],["halo","Background halo",0,1.5,.01]],t=document.createElement("div");t.id="peony-tuner",t.innerHTML=`
     <style>
       #peony-tuner { position: fixed; left: 16px; top: 16px; z-index: 9999; width: 290px; padding: 12px 14px 10px;
         background: rgba(28, 20, 22, 0.84); color: #f8eee8; font: 12px/1.35 system-ui, sans-serif; border-radius: 10px;
