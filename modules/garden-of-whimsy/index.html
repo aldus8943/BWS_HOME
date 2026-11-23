@@ -5,9 +5,30 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="theme-color" content="#2a2230" />
     <title>Garden of Whimsy — A Journey in Bloom · BW/S SS27</title>
-    <script type="module" crossorigin src="./assets/index-LCeuZMDZ.js"></script>
+    <script type="module" crossorigin src="./assets/index-Ca9talXD.js"></script>
     <link rel="modulepreload" crossorigin href="./assets/three-BW246XVu.js">
     <link rel="stylesheet" crossorigin href="./assets/index-DJ4bYLjC.css">
+    <!-- 2026-11-23: end screen centred and larger, with a soft dark backdrop (page-level override; build CSS/JS unchanged) -->
+    <style>
+      #app .ending-ui{top:50%;bottom:auto;left:50%;width:min(880px,calc(100vw - 32px));max-width:none;box-sizing:border-box;
+        padding:clamp(28px,5vw,64px) clamp(20px,4vw,56px);text-align:center;
+        background:radial-gradient(ellipse at center,rgba(24,16,30,.62) 0%,rgba(24,16,30,.38) 55%,rgba(24,16,30,0) 78%),rgba(18,12,24,.30);
+        box-shadow:0 0 0 200vmax rgba(18,12,24,.30);transform:translate(-50%,calc(-50% + 18px))}
+      #app[data-state=ENDING] .ending-ui{transform:translate(-50%,-50%)}
+      #app .ending-ui .eyebrow{font-size:clamp(11px,1vw,13px);letter-spacing:.32em}
+      #app .ending-ui .ending-title{font-size:clamp(40px,6.4vw,92px);line-height:1.04;margin:0 0 clamp(18px,2.4vw,30px)}
+      #app .ending-ui .ending-note{font-size:clamp(12px,1.1vw,15px);line-height:2;margin:0 auto clamp(22px,3vw,36px);max-width:640px}
+      #app .ending-ui .home-button{display:inline-flex}
+      /* 2026-11-23: START / CONTINUE JOURNEY, RETURN TO HOME, PAUSE, RETURN TO INTRO and the intro hint 10% larger */
+      #app .text-button{font-size:12.1px;gap:28.6px;padding:15.4px 0 11px}
+      #app .text-button:not(:disabled):hover,#app .home-button:hover{gap:39.6px}
+      #app .text-button .arrow{font-size:20.9px}
+      #app .home-button{margin-top:15.4px}
+      #app .quiet-button{font-size:11px;padding:11px 0}
+      #app .intro-hint{font-size:11px;margin-top:28.6px}
+      #app .intro-hint span{padding:0 9.9px}
+      @media(max-width:640px){#app .quiet-button{font-size:9.9px}}
+    </style>
   </head>
   <body>
     <main id="app" data-state="INTRO">

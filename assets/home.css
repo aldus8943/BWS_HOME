@@ -76,6 +76,9 @@ a.bring-link[href]:focus-visible { outline: 1px solid currentColor; outline-offs
 .menu-toggle, .menu-close { justify-self: start; display: grid; place-items: center; margin: 0 0 0 -10px; padding: 10px; border: 0; background: none; color: var(--ink); cursor: pointer; }
 .menu-lines { display: grid; gap: 11px; width: 62px; }
 .menu-lines span { display: block; height: 1px; background: currentColor; }
+/* 2026-11-23: over a black / very dark picture the menu lines turn a dark grey (set by home.js), never bright */
+.menu-toggle { transition: color 0.35s ease; }
+.menu-toggle.is-on-dark { color: #555555; }
 .menu-close svg { width: 30px; height: 30px; fill: none; stroke: currentColor; stroke-width: 1; vector-effect: non-scaling-stroke; }
 .menu-toggle:focus-visible, .menu-close:focus-visible { outline: 1px solid currentColor; outline-offset: 2px; }
 .hero + .cards { margin-top: 2px; }

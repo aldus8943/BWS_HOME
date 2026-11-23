@@ -21,14 +21,20 @@
     <p class="bar-mark">AI CINEMATIC STORYTELLING</p>
   </header>
 
-  <main class="stage">
+  <!-- 2026-11-23: is-intro from the first paint, and both posters are C03's first frame, so the old horseman still
+       (THE_CHASE_poster.webp, now unused) never flashes while the page opens -->
+  <main class="stage is-intro">
     <figure class="screen">
       <canvas class="glow" width="96" height="55" aria-hidden="true"></canvas>
-      <video class="film" playsinline preload="metadata" poster="./media/THE_CHASE_poster.webp"
+      <video class="film" playsinline preload="metadata" poster="./media/C03_poster.webp"
         aria-label="The Chase, an AI cinematic short (5 minutes 5 seconds)">
         <source src="./media/THE_CHASE_1920.mp4" type="video/mp4" media="(min-width: 1000px)" />
         <source src="./media/THE_CHASE_1280.mp4" type="video/mp4" />
       </video>
+      <!-- 2026-11-23: behind the opening card, the C03 clip loops (muted) instead of the still poster; it fades out when
+           the film starts and returns when the film ends -->
+      <video class="intro-bg" src="./media/C03.mp4" poster="./media/C03_poster.webp" muted loop playsinline autoplay
+        preload="auto" aria-hidden="true" tabindex="-1"></video>
       <span class="screen-edge" aria-hidden="true"></span>
       <button class="big-play" type="button" aria-label="Play">PLAY</button>
       <!-- opening card: shown when the page opens (and again at the end); WATCH THE FILM starts the film. The title is
@@ -37,9 +43,16 @@
         <p class="intro-kicker">AN UNOFFICIAL TRIBUTE TO QUENTIN TARANTINO'S CINEMA</p>
         <h1 class="intro-title"><img src="./media/THE_CHASE_title.webp" width="1218" height="310" alt="The Chase" /></h1>
         <p class="intro-genre">A GRAPHIC-NOVEL ACTION THRILLER</p>
-        <p class="intro-tagline">Every frame tells a story. Every second fuels the chase.</p>
         <button class="intro-watch" type="button">WATCH THE FILM<svg viewBox="0 0 20 20" aria-hidden="true"><path d="M4 16 16 4M7.5 4H16v8.5" /></svg></button>
-        <p class="intro-note">An independent AI filmmaking team project. Not affiliated with or endorsed by Quentin Tarantino.</p>
+        <!-- 2026-11-23 (later the same day the tagline and the tribute note under the credit were removed at the user's
+             request). Jin Kim's part of this co-produced film: AI-generated footage for 01:59-03:38 only (not director,
+             writer, editor or producer). VIEW MY SEQUENCE plays that part of the same file and pauses at 03:38. -->
+        <button class="intro-seq" type="button">VIEW MY SEQUENCE · 01:59–03:38<svg viewBox="0 0 20 20" aria-hidden="true"><path d="M4 16 16 4M7.5 4H16v8.5" /></svg></button>
+        <div class="intro-credit">
+          <p class="credit-kicker">MY CONTRIBUTION TO THE FILM</p>
+          <p class="credit-role">AI-Generated Video Footage</p>
+          <p class="credit-desc">Footage created by Jin Kim for the sequence from 01:59 to 03:38.</p>
+        </div>
       </div>
     </figure>
 
@@ -53,7 +66,68 @@
       <button class="ctl ctl-sound" type="button">MUTE</button>
       <button class="ctl ctl-full" type="button" aria-label="Full screen">FULL</button>
     </div>
+    <!-- 2026-11-23: on phones the picture is too short for the credit, so it sits here, under the play bar -->
+    <div class="m-credit">
+      <button class="intro-seq" type="button">VIEW MY SEQUENCE · 01:59–03:38<svg viewBox="0 0 20 20" aria-hidden="true"><path d="M4 16 16 4M7.5 4H16v8.5" /></svg></button>
+      <div class="intro-credit">
+        <p class="credit-kicker">MY CONTRIBUTION TO THE FILM</p>
+        <p class="credit-role">AI-Generated Video Footage</p>
+        <p class="credit-desc">Footage created by Jin Kim for the sequence from 01:59 to 03:38.</p>
+      </div>
+    </div>
   </main>
+
+  <!-- 2026-11-23: below the film, a gallery in the layout of the Gentle Monster "2025 Bold Collection" story page:
+       two wide boxes (C8, C9) over four narrow ones (C10), edge to edge; then a space, MILANO_actor; a space, Jewelry_AD.
+       Clips play muted on a loop only while on screen; the two films have a bar: PAUSE | seek | SOUND ON (muted and playing by default).
+       MILANO is 70 % wide, centred. -->
+  <section class="gallery" aria-label="More from The Chase team">
+    <div class="g-grid">
+      <video class="g-tile g-wide" src="./media/C8_web.mp4" muted loop playsinline preload="metadata" aria-hidden="true" tabindex="-1"></video>
+      <video class="g-tile g-wide" src="./media/C9_web.mp4" muted loop playsinline preload="metadata" aria-hidden="true" tabindex="-1"></video>
+      <video class="g-tile" src="./media/C10_web.mp4" muted loop playsinline preload="metadata" aria-hidden="true" tabindex="-1"></video>
+      <video class="g-tile" src="./media/C10_web.mp4" muted loop playsinline preload="metadata" aria-hidden="true" tabindex="-1"></video>
+      <video class="g-tile" src="./media/C10_web.mp4" muted loop playsinline preload="metadata" aria-hidden="true" tabindex="-1"></video>
+      <video class="g-tile" src="./media/C10_web.mp4" muted loop playsinline preload="metadata" aria-hidden="true" tabindex="-1"></video>
+    </div>
+    <div class="g-space" aria-hidden="true"></div>
+    <!-- 2026-11-23: title card for the MILANO_actor film (MUWI character study) -->
+    <header class="g-intro" id="muwi">
+      <p class="gi-kicker">AI CINEMATIC STORYTELLING · CHARACTER STUDY</p>
+      <h2 class="gi-title">MUWI</h2>
+      <p class="gi-sub">THE ART OF SILENT POWER</p>
+      <p class="gi-tagline">Power doesn’t need to speak.</p>
+      <p class="gi-body">An experimental AI cinematic character study exploring the presence, mystery, and restrained intensity of a modern antihero.</p>
+      <p class="gi-body">Through monochrome imagery, atmospheric smoke, dramatic close-ups, and split-screen compositions, MUWI transforms a character’s quiet presence into a compelling visual narrative.</p>
+    </header>
+    <figure class="g-film g-film--wide">
+      <video src="./media/MILANO_actor.mp4" muted loop playsinline preload="metadata" aria-label="MILANO actor film"></video>
+      <div class="g-ctl" aria-label="MILANO actor film controls">
+        <button class="g-btn g-play" type="button">PAUSE</button>
+        <div class="g-track" role="slider" tabindex="0" aria-label="Seek" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><span class="g-fill" aria-hidden="true"></span><span class="g-knob" aria-hidden="true"></span></div>
+        <button class="g-btn g-sound" type="button" aria-pressed="false">SOUND ON</button>
+      </div>
+    </figure>
+    <div class="g-space" aria-hidden="true"></div>
+    <!-- 2026-11-23: title card for the Jewelry_AD film (SECOND SKIN); the 6 vh space under it keeps the film framed as before -->
+    <header class="g-intro g-intro--tight" id="second-skin">
+      <p class="gi-kicker">AI CINEMATIC STORYTELLING · EXPERIMENTAL JEWELRY CAMPAIGN</p>
+      <h2 class="gi-title">SECOND SKIN</h2>
+      <p class="gi-tagline">Where adornment becomes anatomy.</p>
+      <p class="gi-body">An experimental AI fashion film blending futuristic jewelry design with surreal, biomechanical aesthetics.</p>
+      <p class="gi-body">Sculptural silver rings, thorn-like embellishments, and metallic second-skin textures blur the boundaries between the human body and wearable art — imagining jewelry as an extension of the body itself.</p>
+    </header>
+    <div class="g-space g-space--tall" aria-hidden="true"></div>
+    <figure class="g-film g-film--tall">
+      <video src="./media/Jewelry_AD.mp4" muted loop playsinline preload="metadata" aria-label="Jewelry advertisement film"></video>
+      <div class="g-ctl" aria-label="Jewelry advertisement film controls">
+        <button class="g-btn g-play" type="button">PAUSE</button>
+        <div class="g-track" role="slider" tabindex="0" aria-label="Seek" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><span class="g-fill" aria-hidden="true"></span><span class="g-knob" aria-hidden="true"></span></div>
+        <button class="g-btn g-sound" type="button" aria-pressed="false">SOUND ON</button>
+      </div>
+    </figure>
+    <div class="g-space g-space--end" aria-hidden="true"></div>
+  </section>
 
   <script src="./cinema.js"></script>
 </body>

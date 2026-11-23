@@ -20,7 +20,8 @@
   // opening card: on when the page opens and after the film ends; off once the film plays
   const intro = document.querySelector('.intro'), watch = document.querySelector('.intro-watch');
   const setIntro = on => { stage.classList.toggle('is-intro', on); intro.setAttribute('aria-hidden', String(!on)); intro.inert = !on; };
-  watch.addEventListener('click', e => { e.stopPropagation(); film.muted = false; film.play().catch(() => {}); });
+  // 2026-11-23: WATCH THE FILM always plays the whole film from the start (it also ends a sequence playback)
+  watch.addEventListener('click', e => { e.stopPropagation(); window.__chaseSegment?.release(); if (film.currentTime > 0) film.currentTime = 0; film.muted = false; film.play().catch(() => {}); });
   intro.addEventListener('click', e => e.stopPropagation());
   film.addEventListener('play', () => setIntro(false));
   film.addEventListener('ended', () => { setIntro(true); film.currentTime = 0; watch.focus({ preventScroll: true }); });
@@ -105,4 +106,118 @@
 
   // Ctrl + mouse wheel (and trackpad pinch) does not zoom the page
   window.addEventListener('wheel', e => { if (e.ctrlKey) e.preventDefault(); }, { passive: false });
+})();
+
+// 2026-11-23: the C03 clip loops behind the opening card. It plays only while the card is up (paused during the film),
+// and feeds the blurred edge canvas while it shows, so the edges match the moving picture.
+(() => {
+  const stage = document.querySelector('.stage'), bg = document.querySelector('.intro-bg');
+  const glow = document.querySelector('.glow'), film = document.querySelector('.film');
+  if (!stage || !bg) return;
+  const gctx = glow && glow.getContext('2d');
+  let raf = 0;
+  const paint = () => {
+    if (gctx && bg.readyState >= 2 && film.paused) { try { gctx.drawImage(bg, 0, 0, glow.width, glow.height); } catch { /* not ready */ } }
+    raf = stage.classList.contains('is-intro') ? requestAnimationFrame(paint) : 0;
+  };
+  const sync = () => {
+    if (stage.classList.contains('is-intro')) {
+      bg.play().catch(() => {});
+      if (!raf) raf = requestAnimationFrame(paint);
+    } else {
+      setTimeout(() => { if (!stage.classList.contains('is-intro')) bg.pause(); }, 750); // after the fade-out
+    }
+  };
+  new MutationObserver(sync).observe(stage, { attributes: true, attributeFilter: ['class'] });
+  sync();
+})();
+
+// 2026-11-23: gallery under the film. Clips and films play (muted, looped) only while on screen. The two films carry a
+// bar: PAUSE / PLAY on the left, a seek track, SOUND ON / SOUND OFF on the right (default: muted, playing). Sound on mutes
+// the other film and pauses the main film; playing the main film mutes them again. A film the visitor paused stays paused.
+(() => {
+  const vids = [...document.querySelectorAll('.gallery video')];
+  if (!vids.length) return;
+  const film = document.querySelector('.film');
+  const userPaused = new WeakSet();
+  const io = new IntersectionObserver(entries => {
+    for (const e of entries) {
+      const v = e.target;
+      if (e.isIntersecting) { if (!userPaused.has(v)) v.play().catch(() => {}); } else v.pause();
+    }
+  }, { threshold: 0.15 });
+  vids.forEach(v => io.observe(v));
+
+  const figs = [...document.querySelectorAll('.g-film')];
+  const setSound = (fig, on) => {
+    const v = fig.querySelector('video'), b = fig.querySelector('.g-sound');
+    v.muted = !on; b.setAttribute('aria-pressed', String(on)); b.textContent = on ? 'SOUND OFF' : 'SOUND ON';
+  };
+  for (const fig of figs) {
+    const v = fig.querySelector('video'), play = fig.querySelector('.g-play'), sound = fig.querySelector('.g-sound');
+    const track = fig.querySelector('.g-track');
+    const sync = () => { play.textContent = v.paused ? 'PLAY' : 'PAUSE'; };
+    v.addEventListener('play', sync); v.addEventListener('pause', sync);
+    play.addEventListener('click', () => {
+      if (v.paused) { userPaused.delete(v); v.play().catch(() => {}); } else { userPaused.add(v); v.pause(); }
+    });
+    sound.addEventListener('click', () => {
+      const on = sound.getAttribute('aria-pressed') !== 'true';
+      if (on) { figs.forEach(f => { if (f !== fig) setSound(f, false); }); if (film && !film.paused) film.pause(); userPaused.delete(v); v.play().catch(() => {}); }
+      setSound(fig, on);
+    });
+    const paint = () => {
+      const p = v.duration ? v.currentTime / v.duration : 0;
+      track.style.setProperty('--p', p.toFixed(4)); track.setAttribute('aria-valuenow', String(Math.round(p * 100)));
+    };
+    v.addEventListener('timeupdate', paint);
+    const seekAt = x => { const r = track.getBoundingClientRect(); if (v.duration) v.currentTime = Math.min(1, Math.max(0, (x - r.left) / r.width)) * v.duration; paint(); };
+    track.addEventListener('pointerdown', e => { track.setPointerCapture(e.pointerId); seekAt(e.clientX); });
+    track.addEventListener('pointermove', e => { if (track.hasPointerCapture(e.pointerId)) seekAt(e.clientX); });
+    track.addEventListener('keydown', e => {
+      if (e.key === 'ArrowLeft' || e.key === 'ArrowRight') { e.preventDefault(); e.stopPropagation(); v.currentTime = Math.max(0, v.currentTime + (e.key === 'ArrowRight' ? 2 : -2)); paint(); }
+    });
+    // the bar's keys and clicks must not reach the main player's shortcuts
+    fig.querySelector('.g-ctl').addEventListener('keydown', e => { if (e.key === ' ') e.stopPropagation(); });
+    setSound(fig, false); sync();
+  }
+  if (film) film.addEventListener('play', () => figs.forEach(f => setSound(f, false)));
+})();
+
+// 2026-11-23: VIEW MY SEQUENCE. Plays Jin Kim's part of the same film file, 01:59-03:38 (119-218 s), and pauses at 03:38.
+// The limit ends when the visitor seeks, presses WATCH THE FILM, or the segment ends; after that every control works as
+// before (PLAY continues the whole film from where it stopped). Works before the metadata has loaded.
+(() => {
+  const film = document.querySelector('.film'), btns = [...document.querySelectorAll('.intro-seq')];
+  if (!film || !btns.length) return;
+  const START = 119, END = 218;
+  let active = false, ownSeek = false, raf = 0, pendingStart = false;
+  const release = () => { active = false; pendingStart = false; cancelAnimationFrame(raf); raf = 0; };
+  window.__chaseSegment = { release, get active() { return active; }, START, END };
+  const watchEnd = () => {
+    raf = 0;
+    if (!active) return;
+    if (film.currentTime >= END - 0.02) {
+      film.pause(); ownSeek = true; film.currentTime = END; release();
+      return;
+    }
+    if (!film.paused) raf = requestAnimationFrame(watchEnd);
+  };
+  const begin = () => {
+    pendingStart = false;
+    ownSeek = true; film.currentTime = START;
+    film.play().catch(() => {});
+  };
+  btns.forEach(btn => btn.addEventListener('click', e => {
+    e.stopPropagation();
+    active = true; film.muted = false;
+    if (film.readyState >= 1) begin();
+    else { pendingStart = true; film.preload = 'auto'; film.load(); }
+  }));
+  film.addEventListener('loadedmetadata', () => { if (pendingStart && active) begin(); });
+  film.addEventListener('play', () => { if (active && !raf) raf = requestAnimationFrame(watchEnd); });
+  film.addEventListener('seeking', () => {
+    if (ownSeek) { ownSeek = false; return; }
+    if (active) release(); // the visitor moved the film: no automatic pause any more
+  });
 })();

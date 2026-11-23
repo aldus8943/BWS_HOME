@@ -58,6 +58,27 @@
           const sync = () => document.documentElement.classList.toggle('present', doc.body.classList.contains('present'));
           new MutationObserver(sync).observe(doc.body, { attributes: true, attributeFilter: ['class'] });
           sync();
+          // 2026-11-23: sound stays ON by default. The deck fades its cover sound out and switches the button to
+          // "Sound off" when a cover's motion stops (its autoOff); here that automatic switch-off is skipped, so the
+          // sound keeps playing and the button stays ON. The visitor can still turn it off (button or M).
+          const snd = doc.getElementById('snd');
+          if (snd) {
+            let userAt = -1e9;
+            const mark = () => { userAt = performance.now(); };
+            snd.addEventListener('pointerdown', mark, true);
+            snd.addEventListener('click', mark, true);
+            doc.addEventListener('keydown', e => { if (e.key === 'm' || e.key === 'M') mark(); }, true);
+            const AP = win.AudioParam && win.AudioParam.prototype;
+            if (AP && !AP.__bwsSoundOn) {
+              const ramp = AP.linearRampToValueAtTime;
+              // the deck's only ramp to 0 is that automatic fade-out
+              AP.linearRampToValueAtTime = function (v, t) { return v === 0 ? this : ramp.call(this, v, t); };
+              AP.__bwsSoundOn = true;
+            }
+            new win.MutationObserver(() => {
+              if (snd.classList.contains('muted') && performance.now() - userAt > 600) snd.click();
+            }).observe(snd, { attributes: true, attributeFilter: ['class'] });
+          }
         } catch { /* deck not reachable: the link still works */ }
       });
     })();
