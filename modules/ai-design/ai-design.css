@@ -83,6 +83,9 @@ button { font: inherit; color: inherit; }
   display: flex; justify-content: space-between; gap: 24px; flex-wrap: wrap;
   padding: clamp(56px, 7vw, 110px) var(--gutter) 40px; font-size: 12px; letter-spacing: 0.22em; color: var(--muted);
 }
+/* 2026-11-24: the right-hand line ends clear of the TOP button (32 px from the edge, 56 px wide, + 28 px; phones 16 + 48 + 20) */
+.page-foot { padding-right: max(var(--gutter), 116px); }
+@media (max-width: 640px) { .page-foot { padding-right: max(var(--gutter), 84px); } }
 
 /* ---------- viewer ---------- */
 .viewer {

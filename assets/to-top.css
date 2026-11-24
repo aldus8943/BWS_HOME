@@ -1,0 +1,26 @@
+/* TOP button (2026-11-24): bottom right of the two long pages (AI Cinematic Storytelling, AI Product Design).
+   A thin gold ring with an up arrow over "TOP", as in the user's reference image. Comes in after 600 px of scroll,
+   rising 8 px as it fades in; on hover the arrow lifts 4 px. Made by assets/to-top.js. */
+.to-top {
+  position: fixed; right: 32px; bottom: 32px; z-index: 40;
+  display: grid; place-items: center; align-content: center; gap: 3px;
+  width: 56px; height: 56px; padding: 0; box-sizing: border-box; border-radius: 50%;
+  border: 1px solid rgba(214, 182, 128, 0.72); background: rgba(14, 12, 10, 0.62);
+  -webkit-backdrop-filter: blur(6px); backdrop-filter: blur(6px);
+  color: #e2c48f; font: 500 10px/1 "Archivo", "Helvetica Neue", Helvetica, Arial, sans-serif; letter-spacing: 0.16em;
+  text-indent: 0.16em; cursor: pointer;
+  opacity: 0; visibility: hidden; transform: translateY(8px);
+  transition: opacity 0.35s ease, transform 0.35s ease, visibility 0s linear 0.35s, border-color 0.25s ease, color 0.25s ease, background-color 0.25s ease;
+}
+.to-top.is-shown { opacity: 1; visibility: visible; transform: none; transition-delay: 0s; }
+.to-top svg { width: 14px; height: 14px; fill: none; stroke: currentColor; stroke-width: 1.4; stroke-linecap: square; transition: transform 0.25s ease; }
+.to-top:hover, .to-top:focus-visible { border-color: #f0d6a4; color: #f6e3bd; background: rgba(14, 12, 10, 0.8); outline: none; }
+.to-top:hover svg, .to-top:focus-visible svg { transform: translateY(-4px); }
+.to-top:focus-visible { box-shadow: 0 0 0 3px rgba(240, 214, 164, 0.35); }
+@media (max-width: 640px) {
+  .to-top { right: 16px; bottom: 16px; width: 48px; height: 48px; gap: 2px; font-size: 9px; }   /* touch area 48 px (min 44) */
+  .to-top svg { width: 12px; height: 12px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .to-top, .to-top svg { transition: opacity 0.01s, visibility 0s; transform: none !important; }
+}
