@@ -202,6 +202,10 @@ html.motion .acc-item:nth-child(2) { transition-delay: 0.08s; } html.motion .acc
 .acc-title { font-family: var(--font); font-weight: 400; font-size: clamp(32px, 4.3vw, 64px); line-height: 1.05; letter-spacing: -0.004em; overflow-wrap: anywhere; transition: color 0.3s; }
 .acc-sub { font-size: clamp(14px, 1.25vw, 19px); letter-spacing: 0.04em; color: var(--muted); }
 .acc-trigger:hover .acc-title { color: #3b2a25; }
+/* 2026-11-24: the 01 · 02 · 03 heading rows 20 % smaller (number, title, subtitle; the + button unchanged) */
+.acc-num { font-size: clamp(12px, 1.08vw, 16.8px); }
+.acc-title { font-size: clamp(25.6px, 3.44vw, 51.2px); }
+.acc-sub { font-size: clamp(11.2px, 1vw, 15.2px); }
 .acc-icon { position: relative; flex: none; width: clamp(44px, 4vw, 56px); height: clamp(44px, 4vw, 56px); border: 1px solid var(--rule-strong); border-radius: 50%;
   transition: background-color 0.25s, border-color 0.25s, color 0.25s; }
 .acc-icon span { position: absolute; top: 50%; left: 50%; width: 16px; height: 1.4px; margin: -0.7px 0 0 -8px; background: currentColor; transition: transform var(--dur) var(--ease), opacity var(--dur); }
@@ -442,7 +446,7 @@ html.viewer-open { overflow: hidden; }
   .main-top { height: 42px; gap: 10px; padding: 0 20px 0 16px; margin-block: -12px; }
   .hero-title { font-size: clamp(40px, 11.5vw, 56px); }
   .acc-trigger { grid-template-columns: 30px 1fr auto; gap: 12px; }
-  .acc-num { font-size: 13px; letter-spacing: 0.1em; }
+  .acc-num { font-size: 10.4px; letter-spacing: 0.1em; } /* 2026-11-24: 20 % smaller (was 13px) */
   .acc-text { padding-left: 14px; }
   .main-float { height: 42px; padding: 0 18px 0 14px; }
   .scroll-cue { height: 42px; padding: 0 16px; }

@@ -215,8 +215,9 @@ a.card[href]:focus-visible { outline: 2px solid var(--ink); outline-offset: -6px
     linear-gradient(rgba(255, 240, 232, 0.10), rgba(255, 240, 232, 0.10));
 }
 .hero-type { position: absolute; z-index: 1; height: auto; pointer-events: none; }
-.hero-type--left { left: 3.646vw; bottom: 3.021vw; width: 35.94vw; }
-.hero-type--right { right: 3.516vw; bottom: 3.151vw; width: 32.94vw; }
+/* 2026-11-24: the H01 type 20 % smaller (left 35.94 → 28.75vw, right 32.94 → 26.35vw), same corners */
+.hero-type--left { left: 3.646vw; bottom: 3.021vw; width: 28.75vw; }
+.hero-type--right { right: 5.977vw; bottom: 3.151vw; width: 26.35vw; }   /* 2026-11-24: right margin x 1.7 (was 3.516vw) */
 .hero-type--badge { right: 3.776vw; top: calc(var(--header-h) + 56px); width: 9.115vw; }   /* below the FOR BW/S button (was top: 2.734vw, its H01 place) */
 @media (min-aspect-ratio: 4/3) {
   .hero .card--layered { aspect-ratio: auto; height: max(100svh, 44.7vw); }
