@@ -43,6 +43,9 @@
     .main-pill-rail.is-placed { visibility: visible; }
     html.present .main-pill-rail { display: none; }
     @media (max-width: 760px) { .main-pill-rail { top: auto; bottom: 18px; visibility: visible; } }
+    /* 2026-11-24: the deck is shown only once its rail label has been swapped for MAIN (no "BW/S · SS27" flash) */
+    .deck { opacity: 0; transition: opacity 0.2s ease; }
+    .deck.is-ready { opacity: 1; }
   </style>
 </head>
 <body>
@@ -56,31 +59,47 @@
       frame.src = './deck/BWS_SS27_More_is_More_Model4Cover_v25.html' + (location.hash || '');
       const blockZoom = e => { if (e.ctrlKey) e.preventDefault(); };
       window.addEventListener('wheel', blockZoom, { passive: false });
+      const pill = document.querySelector('.main-pill-rail');
+      // 2026-11-24: the deck's own look is changed as soon as its document exists, not at 'load' (which waits for all
+      // of the deck's images, films and sounds, so on the live site the "BW/S · SS27" label showed for a while first).
+      // The frame stays hidden (opacity 0) until then; it is shown at the latest on 'load' or after 4 s.
+      const CSS = '.hud{transform:scale(1.375);transform-origin:100% 100%}' +       // the control row 1.1 × 1.25 larger
+        '@media (min-width:761px){.rail-head{font-size:0;line-height:0;height:62px;padding:0;margin:0 0 6px}}'; // label emptied, taller
+      const show = () => frame.classList.add('is-ready');
+      setTimeout(show, 4000);
+      const deckDoc = () => { try { const d = frame.contentDocument; return d && /BWS_SS27_/.test(d.URL) ? d : null; } catch { return null; } };
+      const placePill = () => {
+        const doc = deckDoc(), win = frame.contentWindow, head = doc && doc.querySelector('.rail-head');
+        if (!head || win.innerWidth <= 760) { pill.style.left = ''; pill.style.top = ''; return; }
+        const r = head.getBoundingClientRect(), h = pill.getBoundingClientRect().height;
+        pill.style.left = r.left + 'px';
+        pill.style.top = (r.top + (r.height - h) / 2) + 'px';
+        pill.classList.add('is-placed');
+      };
+      const addStyle = doc => {
+        if (doc.getElementById('portfolio-hud-110')) return;
+        const st = doc.createElement('style');
+        st.id = 'portfolio-hud-110'; st.textContent = CSS;
+        (doc.head || doc.documentElement).appendChild(st);
+      };
+      // every frame until the deck's rail exists: style in, MAIN placed, frame shown
+      const early = () => {
+        const doc = deckDoc();
+        if (doc && doc.documentElement) {
+          addStyle(doc);
+          if (doc.querySelector('.rail-head')) { placePill(); show(); return; }
+        }
+        if (!frame.classList.contains('is-ready')) requestAnimationFrame(early);
+      };
+      requestAnimationFrame(early);
       frame.addEventListener('load', () => {
         const win = frame.contentWindow, doc = frame.contentDocument;
         try {
           win.focus();                                            // the deck's keys work at once, without a first click
-          // the deck's control row (01 / 06, ‹ ›, sound, full screen) 10% larger, anchored at its bottom-right corner;
-          // added at run time, the deck file itself is not edited
-          const st = doc.createElement('style');
-          st.id = 'portfolio-hud-110';
-          // 2026-11-24: 25 % larger again (1.1 × 1.25 = 1.375)
-          st.textContent = '.hud{transform:scale(1.375);transform-origin:100% 100%}';
-          // the rail's "BW/S · SS27" label gives way to the MAIN pill: emptied and made taller, so the six thumbnails move down
-          st.textContent += '@media (min-width:761px){.rail-head{font-size:0;line-height:0;height:62px;padding:0;margin:0 0 6px}}';
-          const pill = document.querySelector('.main-pill-rail');
-          const placePill = () => {
-            const head = doc.querySelector('.rail-head');
-            if (!head || win.innerWidth <= 760) { pill.style.left = ''; pill.style.top = ''; return; }
-            const r = head.getBoundingClientRect(), h = pill.getBoundingClientRect().height;
-            pill.style.left = r.left + 'px';
-            pill.style.top = (r.top + (r.height - h) / 2) + 'px';
-            pill.classList.add('is-placed');
-          };
+          addStyle(doc);                                          // (again, in case the early pass missed it)
           placePill();
           win.addEventListener('resize', placePill);
           doc.fonts && doc.fonts.ready.then(placePill);
-          doc.head.appendChild(st);
           win.addEventListener('wheel', blockZoom, { passive: false });
           // follow the deck's presentation mode (the rail is hidden there)
           const sync = () => document.documentElement.classList.toggle('present', doc.body.classList.contains('present'));
@@ -88,7 +107,8 @@
           sync();
           // 2026-11-24: the deck's own cover sound is kept as designed: ON when a cover opens, fading out from 2.5 s before the
           // cover's motion stops, OFF at the moment it stops (01, 03, 05). (The 2026-11-23 "sound stays on" override is removed.)
-        } catch { document.querySelector('.main-pill-rail').classList.add('is-placed'); /* deck not reachable: the links still work */ }
+        } catch { pill.classList.add('is-placed'); /* deck not reachable: the links still work */ }
+        show();
       });
     })();
   </script>
