@@ -6,6 +6,7 @@
   <meta name="theme-color" content="#220c1c" />
   <title>Games · Jin Kim Portfolio</title>
   <meta name="description" content="Two BW/S SS27 jewelry arcade games by Jin Kim, playable side by side: Catch the Shine and Break the Vault." />
+  <link rel="stylesheet" href="../../assets/for-bws.css" />
   <link rel="stylesheet" href="./games.css" />
 </head>
 <body>
@@ -13,9 +14,11 @@
        (FINAL 2026-11-19 build) and break-the-vault/ (dist of the FINAL 2026-11-19 package), both unchanged.
        games.js sizes the frames as large as the window allows; the text goes only into the space that is left. -->
   <header class="bar">
-    <a class="back" href="../../index.html"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M12.5 4 6.5 10l6 6" /></svg><span>MAIN</span></a>
+    <!-- 2026-11-24: MAIN pill (was the "‹ MAIN" text link), compact like this page's FOR BW/S -->
+    <a class="main-pill main-pill--compact" href="../../index.html" aria-label="Back to the main page"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M12.5 4 6.5 10l6 6" /></svg>MAIN</a>
     <p class="bar-title" aria-hidden="true">FEATURED · 06 <b>GAMES</b></p>
-    <p class="bar-mark">BW/S · SS27</p>
+    <!-- 2026-11-24: FOR BW/S (to the contribution page) replaces the "BW/S · SS27" mark -->
+    <a class="for-bws for-bws--light for-bws--compact" href="../contribution/index.html" aria-label="For BW/S: strategic contribution"><span class="for-bws-main" aria-hidden="true">FOR BW/S<svg viewBox="0 0 20 20"><path d="M4 16 16 4M7.5 4H16v8.5" /></svg></span><span class="for-bws-sub" aria-hidden="true">STRATEGIC CONTRIBUTION</span></a>
   </header>
 
   <main class="stage">

@@ -27,57 +27,67 @@
     .main-link:focus-visible { box-shadow: 0 1px 0 currentColor; }
     html.app-fullscreen .main-link { display: none; }
   </style>
+  <link rel="stylesheet" href="../../assets/for-bws.css" />
+  <style>
+    /* 2026-11-24: FOR BW/S at the right end of the viewer's top bar (placed by the script below) */
+    .for-bws-fixed { position: fixed; z-index: 2; top: 0; right: 24px; transform: translateY(-50%); visibility: hidden; }
+    .for-bws-fixed.is-placed { visibility: visible; }
+    html.app-fullscreen .for-bws-fixed { display: none; }
+    /* MAIN pill: left end of the viewer's top bar, centred on the wordmark (placed by the script) */
+    .main-pill-bar { position: fixed; z-index: 2; top: 0; left: 0; transform: translateY(-50%); visibility: hidden; }
+    .main-pill-bar.is-placed { visibility: visible; }
+    .main-pill-bar:hover, .main-pill-bar:focus-visible { transform: translateY(calc(-50% - 1px)); }
+    html.app-fullscreen .main-pill-bar { display: none; }
+  </style>
 </head>
 <body>
   <iframe class="app" src="./app/index.html" title="Sculptural Essentials: the Art of Form gold cuff, interactive 3D viewer" allow="fullscreen" allowfullscreen></iframe>
-  <a class="main-link" href="../../index.html" aria-label="Main page"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M12.5 4 6.5 10l6 6" /></svg>MAIN</a>
+  <a class="for-bws for-bws--dark for-bws-fixed" href="../contribution/index.html" aria-label="For BW/S: strategic contribution"><span class="for-bws-main" aria-hidden="true">FOR BW/S<svg viewBox="0 0 20 20"><path d="M4 16 16 4M7.5 4H16v8.5" /></svg></span><span class="for-bws-sub" aria-hidden="true">STRATEGIC CONTRIBUTION</span></a>
+  <!-- 2026-11-24: MAIN pill at the left of the viewer's top bar; the "Sculptural Essentials." wordmark moves right to make room
+       (was "‹ MAIN" at the start of the bottom hint row) -->
+  <a class="main-pill main-pill-bar" href="../../index.html" aria-label="Back to the main page"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M12.5 4 6.5 10l6 6" /></svg>MAIN</a>
   <script>
     (() => {
       const frame = document.querySelector('.app');
-      const link = document.querySelector('.main-link');
-      const GAP_EM = 2.2; // space between MAIN and the pushed hint row, in the row's font size
+      const pill = document.querySelector('.main-pill-bar');
+      const bws = document.querySelector('.for-bws-fixed');
       const blockZoom = e => { if (e.ctrlKey) e.preventDefault(); };
       window.addEventListener('wheel', blockZoom, { passive: false });
       frame.addEventListener('load', () => {
         let doc, win;
-        try { doc = frame.contentDocument; win = frame.contentWindow; } catch { link.classList.add('is-placed'); link.style.left = '24px'; link.style.top = 'calc(100% - 40px)'; return; }
+        try { doc = frame.contentDocument; win = frame.contentWindow; } catch {
+          pill.classList.add('is-placed'); pill.style.left = '24px'; pill.style.top = '40px';
+          bws.classList.add('is-placed'); bws.style.top = '40px'; return;
+        }
         win.addEventListener('wheel', blockZoom, { passive: false });
-        const push = doc.createElement('style');
-        push.id = 'portfolio-main-room';
-        doc.head.appendChild(push);
-        // MAIN takes the row's place and type; the row moves right by MAIN's width plus a gap
+        const room = doc.createElement('style');
+        room.id = 'portfolio-main-room';
+        doc.head.appendChild(room);
+        // 2026-11-24: MAIN pill at the left end of the top bar, the wordmark moved right by the pill's width plus a gap;
+        // FOR BW/S at the right end (just below the bar when the bar is too narrow for both)
         const place = () => {
-          const hint = doc.querySelector('.gesture-hint');
-          if (!hint) return false;
-          const hs = win.getComputedStyle(hint);
-          link.style.fontSize = hs.fontSize; link.style.letterSpacing = hs.letterSpacing;
-          link.style.fontWeight = hs.fontWeight; link.style.fontFamily = hs.fontFamily;
-          const room = Math.ceil(link.getBoundingClientRect().width + GAP_EM * parseFloat(hs.fontSize));
-          push.textContent = `.gesture-hint{padding-left:${room}px}`;
-          const r = hint.getBoundingClientRect(), icon = hint.querySelector('.gesture-icon');
-          // does the pushed row still fit? (narrow screens: no — then MAIN goes to the right end of the top bar)
-          const text = doc.createRange(); text.selectNodeContents(hint);
-          const fits = text.getBoundingClientRect().right <= Math.min(r.right, win.innerWidth) + 0.5;
-          if (fits) {
-            const ir = (icon || hint).getBoundingClientRect();
-            link.style.left = `${r.left}px`;
-            link.style.top = `${(ir.top + ir.bottom) / 2}px`;
-          } else {
-            push.textContent = '';
-            const header = doc.querySelector('.site-header'), mark = doc.querySelector('.wordmark');
-            const hr = header.getBoundingClientRect(), mr = mark.getBoundingClientRect();
-            const pr = parseFloat(win.getComputedStyle(header).paddingRight) || 20;
-            link.style.left = `${hr.right - pr - link.getBoundingClientRect().width}px`;
-            link.style.top = `${(mr.top + mr.bottom) / 2}px`;
-          }
-          link.classList.add('is-placed');
+          const header = doc.querySelector('.site-header'), mark = doc.querySelector('.wordmark');
+          if (!header || !mark) return false;
+          const gap = win.innerWidth <= 640 ? 14 : 22;
+          room.textContent = `.wordmark{margin-left:${Math.ceil(pill.getBoundingClientRect().width + gap)}px}`;
+          const hs = win.getComputedStyle(header);
+          const hr = header.getBoundingClientRect(), mr = mark.getBoundingClientRect();
+          const pl = parseFloat(hs.paddingLeft) || 20, pr = parseFloat(hs.paddingRight) || 20;
+          const midY = (mr.top + mr.bottom) / 2;
+          pill.style.left = `${hr.left + pl}px`;
+          pill.style.top = `${midY}px`;
+          pill.classList.add('is-placed');
+          const bw = bws.getBoundingClientRect().width;
+          const fits = mr.right + 16 + bw <= hr.right - pr;
+          bws.style.right = `${win.innerWidth - hr.right + pr}px`;
+          bws.style.top = fits ? `${midY}px` : `${hr.bottom + 12 + bws.getBoundingClientRect().height / 2}px`;
+          bws.classList.add('is-placed');
           return true;
         };
-        // the viewer is a React app: wait for the row, then follow resizes, scrolling inside it, fonts and full screen
+        // the viewer is a React app: wait for the header, then follow resizes, fonts and full screen
         const tryPlace = () => { if (!place()) requestAnimationFrame(tryPlace); };
         tryPlace();
         win.addEventListener('resize', place);
-        win.addEventListener('scroll', place, { passive: true });
         new win.ResizeObserver(place).observe(doc.body);
         doc.addEventListener('fullscreenchange', () => document.documentElement.classList.toggle('app-fullscreen', !!doc.fullscreenElement));
         doc.fonts && doc.fonts.ready.then(place);

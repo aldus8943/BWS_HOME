@@ -8,6 +8,7 @@
     <script type="module" crossorigin src="./assets/index-Ca9talXD.js"></script>
     <link rel="modulepreload" crossorigin href="./assets/three-BW246XVu.js">
     <link rel="stylesheet" crossorigin href="./assets/index-DJ4bYLjC.css">
+    <link rel="stylesheet" href="../../assets/for-bws.css" />
     <!-- 2026-11-23: end screen centred and larger, with a soft dark backdrop (page-level override; build CSS/JS unchanged) -->
     <style>
       #app .ending-ui{top:50%;bottom:auto;left:50%;width:min(880px,calc(100vw - 32px));max-width:none;box-sizing:border-box;
@@ -28,6 +29,22 @@
       #app .intro-hint{font-size:11px;margin-top:28.6px}
       #app .intro-hint span{padding:0 9.9px}
       @media(max-width:640px){#app .quiet-button{font-size:9.9px}}
+      /* 2026-11-24: FOR BW/S top right; PAUSE / RETURN TO INTRO, the hint pill and the progress bar move down below it */
+      .for-bws-fixed{position:fixed;z-index:20;top:22px;right:clamp(20px,4vw,60px)}
+      /* 2026-11-24: MAIN pill top left, level with FOR BW/S; the intro's eyebrow line is removed */
+      .main-pill-fixed{position:fixed;z-index:20;top:22px;left:clamp(24px,6vw,96px)}
+      #intro-ui .eyebrow{display:none}
+      #app #intro-ui{top:max(92px,clamp(32px,7vw,96px))}
+      /* 2026-11-24: intro text 15 % larger: A Journey in Bloom, START JOURNEY, RETURN TO HOME, the scroll / drag hint */
+      #app #intro-ui .subtitle{font-size:clamp(23px,2.415vw,34.5px)}
+      #app #intro-ui .text-button{font-size:13.9px;gap:32.9px;padding:17.7px 0 12.7px}
+      #app #intro-ui .text-button:not(:disabled):hover,#app #intro-ui .home-button:hover{gap:45.5px}
+      #app #intro-ui .text-button .arrow{font-size:24px}
+      #app #intro-ui .home-button{margin-top:17.7px}
+      #app #intro-ui .intro-hint{font-size:12.65px;margin-top:32.9px}
+      #app #intro-ui .intro-hint span{padding:0 11.4px}
+      #app .journey-ui{top:84px} #app .instructions{top:128px} #app .progress{top:166px}
+      @media(max-width:640px){.for-bws-fixed{top:14px;right:18px} .main-pill-fixed{top:14px;left:22px} #app #intro-ui{top:66px} #app .journey-ui{top:58px} #app .instructions{top:96px} #app .progress{top:132px}}
     </style>
   </head>
   <body>
@@ -81,6 +98,8 @@
       </section>
 
       <pre id="debug" class="debug" hidden></pre>
+      <a class="main-pill main-pill-fixed" href="../../index.html" aria-label="Back to the main page"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M12.5 4 6.5 10l6 6" /></svg>MAIN</a>
+      <a class="for-bws for-bws--light for-bws-fixed" href="../contribution/index.html" aria-label="For BW/S: strategic contribution"><span class="for-bws-main" aria-hidden="true">FOR BW/S<svg viewBox="0 0 20 20"><path d="M4 16 16 4M7.5 4H16v8.5" /></svg></span><span class="for-bws-sub" aria-hidden="true">STRATEGIC CONTRIBUTION</span></a>
       <div id="curtain" aria-hidden="true"></div>
     </main>
   </body>

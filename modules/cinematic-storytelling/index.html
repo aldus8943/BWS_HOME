@@ -9,6 +9,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,100..900&family=Tinos:ital@0;1&display=swap" />
+  <link rel="stylesheet" href="../../assets/for-bws.css" />
   <link rel="stylesheet" href="./cinema.css" />
 </head>
 <body>
@@ -16,9 +17,11 @@
        (H.264 / AAC copied unchanged; 1920 and 1280 sizes in media/). Black page; the picture's edges are feathered into
        the black; a thin framed play bar sits below it. Sound and music: made by the team, cleared for this use. -->
   <header class="bar">
-    <a class="back" href="../../index.html"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M12.5 4 6.5 10l6 6" /></svg><span>MAIN</span></a>
+    <!-- 2026-11-24: MAIN pill (was the "‹ MAIN" text link) -->
+    <a class="main-pill" href="../../index.html" aria-label="Back to the main page"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M12.5 4 6.5 10l6 6" /></svg>MAIN</a>
     <p class="bar-title">FEATURED · 05 <b>THE CHASE</b></p>
-    <p class="bar-mark">AI CINEMATIC STORYTELLING</p>
+    <!-- 2026-11-24: FOR BW/S (to the contribution page) replaces the "AI CINEMATIC STORYTELLING" mark -->
+    <a class="for-bws for-bws--light" href="../contribution/index.html" aria-label="For BW/S: strategic contribution"><span class="for-bws-main" aria-hidden="true">FOR BW/S<svg viewBox="0 0 20 20"><path d="M4 16 16 4M7.5 4H16v8.5" /></svg></span><span class="for-bws-sub" aria-hidden="true">STRATEGIC CONTRIBUTION</span></a>
   </header>
 
   <!-- 2026-11-23: is-intro from the first paint, and both posters are C03's first frame, so the old horseman still

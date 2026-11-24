@@ -1,0 +1,51 @@
+/* FOR BW/S button on the content pages (2026-11-24): the home hero's "FOR BW/S / STRATEGIC CONTRIBUTION" button,
+   smaller, top right of every work page; it opens the contribution page (modules/contribution).
+   --light: ivory on dark pages. --dark: espresso on light pages. Phones: one line (the sub-line is dropped). */
+.for-bws {
+  display: inline-flex; flex-direction: column; align-items: center; justify-content: center; gap: 4.4px;
+  box-sizing: border-box; padding: 7.7px 14.3px 6.6px; border: 1px solid currentColor; border-radius: 0;
+  font-family: "Helvetica Neue", Helvetica, Arial, "Apple SD Gothic Neo", "Malgun Gothic", sans-serif;
+  line-height: 1; text-decoration: none; white-space: nowrap; cursor: pointer;
+  -webkit-backdrop-filter: blur(6px); backdrop-filter: blur(6px);
+  transition: background-color 0.25s ease, border-color 0.25s ease, color 0.25s ease;
+}
+.for-bws-main { display: inline-flex; align-items: center; font-size: 13.2px; font-weight: 400; letter-spacing: 0.3em; padding-left: 0.3em; }
+.for-bws-main svg { width: 12.1px; height: 12.1px; margin-left: 0.25em; fill: none; stroke: currentColor; stroke-width: 1.4; stroke-linecap: square; }
+.for-bws-sub { font-size: 7.7px; font-weight: 500; letter-spacing: 0.26em; padding-left: 0.26em; }
+.for-bws--light { color: #f4ede3; border-color: rgba(244, 237, 227, 0.55); background: rgba(20, 14, 12, 0.28); }
+.for-bws--light:hover, .for-bws--light:focus-visible { background: rgba(244, 237, 227, 0.14); border-color: #f4ede3; }
+.for-bws--dark { color: #2a1d1a; border-color: rgba(42, 29, 26, 0.45); background: rgba(255, 255, 255, 0.32); }
+.for-bws--dark:hover, .for-bws--dark:focus-visible { background: rgba(42, 29, 26, 0.08); border-color: #2a1d1a; }
+/* 2026-11-24: 10 % larger on every page but Games, which keeps the first size (.for-bws--compact) */
+.for-bws--compact { gap: 4px; padding: 7px 13px 6px; }
+.for-bws--compact .for-bws-main { font-size: 12px; }
+.for-bws--compact .for-bws-main svg { width: 11px; height: 11px; }
+.for-bws--compact .for-bws-sub { font-size: 7px; }
+.for-bws:focus-visible { outline: 1px solid currentColor; outline-offset: 3px; }
+@media (max-width: 640px) {
+  .for-bws { padding: 6.6px 9.9px 5.5px; }
+  .for-bws-main { font-size: 11px; letter-spacing: 0.2em; padding-left: 0.2em; }
+  .for-bws-main svg { width: 9.9px; height: 9.9px; }
+  .for-bws-sub { display: none; }
+  .for-bws--compact { padding: 6px 9px 5px; }
+  .for-bws--compact .for-bws-main { font-size: 10px; }
+  .for-bws--compact .for-bws-main svg { width: 9px; height: 9px; }
+}
+
+/* 2026-11-24: MAIN pill, top left of every work page: the contribution page's MAIN pill (dark, ivory border, type
+   14.4 px), sized to sit level with FOR BW/S (42 px high; .main-pill--compact 38 px on Games; phones 32 px). */
+.main-pill {
+  display: inline-flex; align-items: center; gap: 10px; box-sizing: border-box; height: 42px; padding: 0 20px 0 16px;
+  border: 1px solid rgba(244, 237, 227, 0.28); border-radius: 999px; background: rgba(36, 27, 24, 0.9);
+  -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px); color: #f4ede3;
+  font: 500 14.4px/1 "Helvetica Neue", Helvetica, Arial, "Apple SD Gothic Neo", "Malgun Gothic", sans-serif;
+  letter-spacing: 0.18em; text-decoration: none; white-space: nowrap;
+  box-shadow: 0 14px 30px -18px rgba(20, 14, 12, 0.6); transition: background-color 0.25s, color 0.25s, transform 0.35s ease;
+}
+.main-pill:hover, .main-pill:focus-visible { background: #f4ede3; color: #141110; transform: translateY(-1px); outline: none; }
+.main-pill svg { width: 14px; height: 14px; flex: none; fill: none; stroke: currentColor; stroke-width: 1.6; }
+.main-pill--compact { height: 38px; gap: 9px; padding: 0 18px 0 14px; font-size: 13.2px; }
+@media (max-width: 640px) {
+  .main-pill, .main-pill--compact { height: 32px; gap: 8px; padding: 0 14px 0 11px; font-size: 12px; letter-spacing: 0.14em; }
+  .main-pill svg { width: 12px; height: 12px; }
+}

@@ -11,6 +11,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,opsz,wght@0,6..96,400;1,6..96,400&amp;family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;0,6..72,600;1,6..72,400;1,6..72,500&amp;family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;1,9..40,400&amp;display=swap" />
+  <link rel="stylesheet" href="../../assets/for-bws.css" />
   <link rel="stylesheet" href="./contribution.css" />
   <!-- set before first paint: the hero / row motion only runs when the visitor has not asked for reduced motion -->
   <script>try { if (!matchMedia('(prefers-reduced-motion: reduce)').matches) document.documentElement.classList.add('motion'); } catch (e) {}</script>
@@ -26,7 +27,8 @@
   <header class="hero">
     <div class="hero-sheen" aria-hidden="true"></div>
     <div class="hero-bar">
-      <p class="hero-mark">BW/S · CREATIVE PORTFOLIO</p>
+      <!-- 2026-11-24: MAIN (as the floating MAIN pill, type 20 % larger) replaces "BW/S · CREATIVE PORTFOLIO" -->
+      <a class="main-top" href="../../index.html" aria-label="Back to the main page"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M12.5 4 6.5 10l6 6" /></svg>MAIN</a>
       <p class="hero-mark">JIN KIM / 2026</p>
     </div>
     <div class="hero-inner">
@@ -189,9 +191,11 @@
                   <p class="area-caps">AI Fashion Film · Motion Graphics · Immersive UX · Interactive Games</p>
                   <p class="sub-label">Selected Work</p>
                   <p class="links">
+                    <!-- 2026-11-24: the four works, named as on the home page -->
+                    <a class="text-link" href="../interactive-deck/index.html">Interactive Slide Deck <span aria-hidden="true">↗</span></a>
+                    <a class="text-link" href="../garden-of-whimsy/index.html">Immersive Experience <span aria-hidden="true">↗</span></a>
+                    <a class="text-link" href="../blender-modeling/index.html">Interactive Modeling <span aria-hidden="true">↗</span></a>
                     <a class="text-link" href="../cinematic-storytelling/index.html">AI Cinematic Storytelling <span aria-hidden="true">↗</span></a>
-                    <a class="text-link" href="../garden-of-whimsy/index.html">Garden of Whimsy <span aria-hidden="true">↗</span></a>
-                    <a class="text-link" href="../games/index.html">Interactive Games <span aria-hidden="true">↗</span></a>
                   </p>
                 </div>
               </li>
@@ -305,6 +309,8 @@
     <div class="viewer-bar">
       <p class="viewer-title" id="viewer-resume-title">JIN KIM · SUBMITTED RESUME</p>
       <div class="viewer-tools">
+        <!-- 2026-11-24: FOR BW/S, as on the work pages; here it closes the résumé and returns to this page -->
+        <button class="for-bws for-bws--light" type="button" data-close aria-label="For BW/S: back to Strategic Contribution"><span class="for-bws-main" aria-hidden="true">FOR BW/S<svg viewBox="0 0 20 20"><path d="M4 16 16 4M7.5 4H16v8.5" /></svg></span><span class="for-bws-sub" aria-hidden="true">STRATEGIC CONTRIBUTION</span></button>
         <button class="tool" type="button" data-zoom="-1" aria-label="Zoom out">−</button>
         <span class="zoom-value" aria-live="polite">100%</span>
         <button class="tool" type="button" data-zoom="1" aria-label="Zoom in">+</button>
