@@ -5,9 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="theme-color" content="#2a2230" />
     <title>Garden of Whimsy — A Journey in Bloom · BW/S SS27</title>
-    <script type="module" crossorigin src="./assets/index-Ca9talXD.js"></script>
+    <script type="module" crossorigin src="./assets/index-CD9W67zs.js"></script>
     <link rel="modulepreload" crossorigin href="./assets/three-BW246XVu.js">
-    <link rel="stylesheet" crossorigin href="./assets/index-DJ4bYLjC.css">
+    <link rel="stylesheet" crossorigin href="./assets/index-D6lqPmMw.css">
     <link rel="stylesheet" href="../../assets/for-bws.css" />
     <!-- 2026-11-23: end screen centred and larger, with a soft dark backdrop (page-level override; build CSS/JS unchanged) -->
     <style>
@@ -47,8 +47,14 @@
       #app #intro-ui .home-button{margin-top:17.7px}
       #app #intro-ui .intro-hint{font-size:12.65px;margin-top:32.9px}
       #app #intro-ui .intro-hint span{padding:0 11.4px}
-      #app .journey-ui{top:84px} #app .instructions{top:128px} #app .progress{top:166px}
-      @media(max-width:640px){.for-bws-fixed{top:14px;right:18px} .main-pill-fixed{top:14px;left:22px} #app #intro-ui{top:66px} #app .journey-ui{top:58px} #app .instructions{top:96px} #app .progress{top:132px}}
+      /* 2026-11-24: FLOW BOOST (in the build) below the progress line */
+      #app .journey-ui{top:84px} #app .instructions{top:128px} #app .progress{top:166px} #app .flow-boost{top:196px}
+      @media(max-width:640px){.for-bws-fixed{top:14px;right:18px} .main-pill-fixed{top:14px;left:22px} #app #intro-ui{top:66px} #app .journey-ui{top:58px} #app .instructions{top:96px} #app .progress{top:132px} #app .flow-boost{top:158px}}
+      /* 2026-11-24: S / W key caps in the journey hint (the FLOW BOOST key style); touch screens: words only */
+      #app .instructions .keys{font-weight:inherit;white-space:nowrap}
+      #app .instructions kbd{display:inline-grid;place-items:center;min-width:15px;height:15px;box-sizing:border-box;padding:0 3px;margin:0 0 0 4px;border:1px solid rgba(255,240,228,.5);border-radius:4px;font:inherit;font-size:8.5px;letter-spacing:0;vertical-align:-3px}
+      #app .instructions kbd+kbd{margin-left:3px}
+      @media (hover:none){#app .instructions .keys{display:none}}
     </style>
   </head>
   <body>
@@ -78,7 +84,8 @@
         <div class="progress-track"><div class="progress-fill"></div><div class="progress-mark"></div></div>
       </div>
 
-      <p id="instructions" class="instructions">SCROLL TO EXPLORE <span>·</span> DRAG TO LOOK AROUND</p>
+      <!-- 2026-11-24: the S / W keys in the hint (S forward, W back); shortened the same day so it covers less of the view -->
+      <p id="instructions" class="instructions">SCROLL <b class="keys">/ <kbd title="forward">S</kbd><kbd title="back">W</kbd></b> <span>·</span> DRAG TO LOOK</p>
       <section id="garden-title" class="garden-title" aria-live="polite">
         <p class="garden-number">GARDEN 01</p>
         <p class="garden-name">The Awakening</p>
