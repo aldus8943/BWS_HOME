@@ -494,3 +494,14 @@ html.viewer-open { overflow: hidden; }
 :is(#acc-1, #acc-2) .area-title { line-height: 1.245; }                              /* 1.35 */
 :is(#acc-1, #acc-2) .panel-title { line-height: 1.105; }                             /* 1.15 */
 :is(#acc-1, #acc-2) :is(.person, .metric-num) { line-height: 1; }
+
+/* 2026-11-24: TOP button (assets/to-top.css / .js) in the bottom-right corner, level with the floating MAIN pill, in
+   MAIN's espresso; once it shows (after 600 px of scroll) MAIN slides left to make room (gap 14 px). */
+.to-top { right: max(20px, env(safe-area-inset-right)); bottom: max(15px, env(safe-area-inset-bottom)); background: rgba(36, 27, 24, 0.9); }
+.to-top:hover, .to-top:focus-visible { background: rgba(36, 27, 24, 0.96); }
+.main-float { transition: background-color 0.25s, color 0.25s, transform 0.35s var(--ease), right 0.35s var(--ease); }
+body:has(.to-top.is-shown) .main-float { right: calc(max(20px, env(safe-area-inset-right)) + 70px); }   /* 56 + 14 */
+@media (max-width: 640px) {
+  .to-top { bottom: max(17px, env(safe-area-inset-bottom)); }                                              /* centre level with the 42 px MAIN */
+  body:has(.to-top.is-shown) .main-float { right: calc(max(20px, env(safe-area-inset-right)) + 60px); }  /* 48 + 12 */
+}
