@@ -33,8 +33,10 @@
       if (!copy || !lede || !heroEl) return;
       const stacked = window.innerWidth <= 1024; // stacked hero: a pill right under the lede, on the copy's left edge
       const inset = stacked ? 0 : Math.round(Math.min(72, window.innerWidth * 0.0375));
-      const gap = stacked ? 10 :Math.round(Math.max(56, Math.min(165, window.innerHeight * 0.15)));
-      const maxTop = heroEl.offsetHeight - cue.offsetHeight - (stacked ? 12 : 28);
+      // 2026-11-24: raised — gap 40–100 px (was 56–165), and never below the first screen's bottom edge
+      const gap = stacked ? 10 : Math.round(Math.max(40, Math.min(100, window.innerHeight * 0.08)));
+      // stacked (tablet / phone): under the lede, inside the hero, as before; wide: also kept on the first screen
+      const maxTop = (stacked ? heroEl.offsetHeight : Math.min(heroEl.offsetHeight, window.innerHeight - heroEl.offsetTop)) - cue.offsetHeight - (stacked ? 12 : 48);
       cue.style.right = cue.style.bottom = 'auto';
       cue.style.left = (copy.offsetLeft + inset) + 'px';
       // the lede's offsetTop is measured from .hero-copy (its transform makes it the offset parent), so add the column's own

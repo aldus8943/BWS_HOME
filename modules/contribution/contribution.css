@@ -72,6 +72,7 @@ ul, ol { padding: 0; list-style: none; }
   background: rgba(36, 27, 24, 0.9); -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px); color: #f4ede3;
   font-size: calc(var(--label) * 1.2); font-weight: 500; letter-spacing: var(--track); text-decoration: none;
   box-shadow: 0 14px 30px -18px rgba(20, 14, 12, 0.6); transition: background-color 0.25s, color 0.25s, transform 0.35s var(--ease); }
+.main-top { margin-block: -15px; } /* 2026-11-24: overhangs the bar, which keeps its text-line height (hero layout unchanged) */
 .main-top:hover, .main-top:focus-visible { background: #f4ede3; color: var(--ink); transform: translateY(-2px); }
 .main-top svg { width: 15.6px; height: 15.6px; fill: none; stroke: currentColor; stroke-width: 1.6; }
 .hero-mark { font-size: 13px; font-weight: 500; letter-spacing: 0.22em; color: rgba(244, 237, 227, 0.86); }
@@ -80,6 +81,12 @@ ul, ol { padding: 0; list-style: none; }
 
 /* monogram: all positions in % of its own box (from the mockup), type in container units so it scales as one piece */
 .mono { position: relative; container-type: inline-size; width: 100%; max-width: 760px; aspect-ratio: 550 / 575; justify-self: start; will-change: transform; transition: transform 0.9s var(--ease); }
+/* 2026-11-24: wide screens: the monogram is also sized to the screen height, so the whole hero (D M A, the AI label and
+   SCROLL DOWN) fits on the first screen of short, wide windows (1920 x 1080 monitor = about 1899 x 918 in Chrome). 230 px =
+   top bar + the grid's top and bottom padding + the AI label under the box. Never below 380 px wide. */
+@media (min-width: 1025px) {
+  .mono { max-width: min(760px, max(380px, calc((100vh - 230px) * 550 / 575))); max-width: min(760px, max(380px, calc((100svh - 230px) * 550 / 575))); }
+}
 .mono-line { position: absolute; width: 1px; background: rgba(244, 237, 227, 0.62); transform-origin: top; }
 .mono-line--1 { left: 36.7%; top: 0; height: 99%; }
 .mono-line--2 { left: 77.3%; top: 0; height: 41.7%; }
@@ -432,7 +439,7 @@ html.viewer-open { overflow: hidden; }
 @media (max-width: 640px) {
   .hero-bar { padding-top: 18px; }
   .hero-mark { font-size: 11px; letter-spacing: 0.16em; }
-  .main-top { height: 42px; gap: 10px; padding: 0 20px 0 16px; }
+  .main-top { height: 42px; gap: 10px; padding: 0 20px 0 16px; margin-block: -12px; }
   .hero-title { font-size: clamp(40px, 11.5vw, 56px); }
   .acc-trigger { grid-template-columns: 30px 1fr auto; gap: 12px; }
   .acc-num { font-size: 13px; letter-spacing: 0.1em; }
