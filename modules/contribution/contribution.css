@@ -480,3 +480,17 @@ html.viewer-open { overflow: hidden; }
 @media (hover: none) {
   .cue-mouse { display: none; }
 }
+
+/* 2026-11-24: 01 WHO I AM and 02 WHAT I BRING TO BW/S — the space between lines 30 % smaller (draft B, approved):
+   new line-height = 1 + (old − 1) × 0.7. One-line numbers and the JIN KIM line (1.0) unchanged. */
+:is(#acc-1, #acc-2),
+:is(#acc-1, #acc-2) :is(.label, .sub-label, .area-caps, .area-num, dt, .level, .cta, .text-link) { line-height: 1.42; }   /* 1.6 */
+:is(#acc-1, #acc-2) :is(.body, .plain li) { line-height: 1.49; }                     /* 1.7 */
+:is(#acc-1, #acc-2) .body.body--lead { line-height: 1.42; }                          /* 1.6 */
+:is(#acc-1, #acc-2) :is(.lede, .note) { line-height: 1.455; }                        /* 1.65 */
+:is(#acc-1, #acc-2) .metric-label { line-height: 1.35; }                             /* 1.5 */
+:is(#acc-1, #acc-2) .block-title { line-height: 1.28; }                              /* 1.4 */
+:is(#acc-1, #acc-2) .role { line-height: 1.21; }                                     /* 1.3 */
+:is(#acc-1, #acc-2) .area-title { line-height: 1.245; }                              /* 1.35 */
+:is(#acc-1, #acc-2) .panel-title { line-height: 1.105; }                             /* 1.15 */
+:is(#acc-1, #acc-2) :is(.person, .metric-num) { line-height: 1; }
