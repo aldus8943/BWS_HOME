@@ -229,4 +229,51 @@
   stage.addEventListener('pointerdown', e => { if (e.pointerType !== 'mouse') sx = e.clientX; });
   stage.addEventListener('pointerup', e => { if (sx === null) return; const dx = e.clientX - sx; sx = null; if (Math.abs(dx) > 40) go(dx < 0 ? 1 : -1); });
   decks.addEventListener('viewer:open', () => pick(deck));
+
+  /* ------------------------------------------------------------------ back from a work page (2026-11-24)
+     A link inside an open section (e.g. 02 · What I Bring to BW/S → Interactive Slide Deck) remembers that section
+     and where the link's row sat on the screen. When the visitor comes back here from a work page (its FOR BW/S
+     button, or the browser's Back), the section opens again at once and the row is put back in the same spot, so
+     there is no need to scroll down and press + again. Coming from the home page starts fresh, as before. */
+  const RETURN_KEY = 'bws-contribution-return';
+  document.querySelectorAll('.acc-panel a[href]').forEach(a => a.addEventListener('click', e => {
+    if (e.defaultPrevented || e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey || a.target === '_blank') return;
+    const panel = a.closest('.acc-panel'), row = a.closest('.area') || a.closest('.block') || a;
+    const rows = [...panel.querySelectorAll('.area, .block')];
+    try { sessionStorage.setItem(RETURN_KEY, JSON.stringify({ panel: panel.id, row: rows.indexOf(row), top: Math.round(row.getBoundingClientRect().top), t: Date.now() })); } catch (err) { /* storage off: no return spot */ }
+  }));
+  let back = null;
+  try { back = JSON.parse(sessionStorage.getItem(RETURN_KEY) || 'null'); sessionStorage.removeItem(RETURN_KEY); } catch (err) { back = null; }
+  const nav = performance.getEntriesByType ? performance.getEntriesByType('navigation')[0] : null;
+  let fromWork = false;
+  try { const u = new URL(document.referrer); fromWork = u.origin === location.origin && /\/modules\/(?!contribution\/)/.test(u.pathname); } catch (err) { fromWork = false; }
+  if (back && (fromWork || (nav && nav.type === 'back_forward')) && Date.now() - back.t < 12 * 3600 * 1000) {
+    const btn = triggers.find(b => b.getAttribute('aria-controls') === back.panel);
+    const panel = btn && panelOf(btn);
+    if (panel) {
+      if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
+      btn.setAttribute('aria-expanded', 'true');
+      panel.hidden = false; panel.classList.add('is-open'); panel.style.height = '';
+      const place = () => {
+        const row = [...panel.querySelectorAll('.area, .block')][back.row];
+        const target = row || btn;
+        // the section may still be rising in (translateY 26 px → 0): measure where it will come to rest
+        const item = panel.closest('.acc-item'), t = item ? getComputedStyle(item).transform : 'none';
+        const lift = t && t !== 'none' ? new DOMMatrixReadOnly(t).m42 : 0;
+        window.scrollTo({ top: Math.max(0, window.scrollY + target.getBoundingClientRect().top - lift - (row ? back.top : 0)), behavior: 'instant' });
+      };
+      // web fonts and late layout can move the row after the first placement: keep it in place for up to 4 s,
+      // until the visitor scrolls, clicks or types
+      let settled = false;
+      const quit = () => { settled = true; ro.disconnect(); };
+      const again = () => { if (!settled) place(); };
+      const ro = new ResizeObserver(again);
+      ro.observe(document.body); ro.observe(panel);
+      ['wheel', 'touchstart', 'keydown', 'pointerdown'].forEach(t => window.addEventListener(t, quit, { once: true, passive: true }));
+      setTimeout(quit, 4000);
+      place(); requestAnimationFrame(again);
+      if (document.fonts) { document.fonts.ready.then(again); document.fonts.addEventListener('loadingdone', again); }
+      window.addEventListener('load', again, { once: true });
+    }
+  }
 })();
