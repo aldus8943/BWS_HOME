@@ -55,6 +55,11 @@
       #app .instructions kbd{display:inline-grid;place-items:center;min-width:15px;height:15px;box-sizing:border-box;padding:0 3px;margin:0 0 0 4px;border:1px solid rgba(255,240,228,.5);border-radius:4px;font:inherit;font-size:8.5px;letter-spacing:0;vertical-align:-3px}
       #app .instructions kbd+kbd{margin-left:3px}
       @media (hover:none){#app .instructions .keys{display:none}}
+      /* the same key caps in the intro hint, at its larger type */
+      #app .intro-hint .keys{font-weight:inherit;white-space:nowrap;margin-right:3px}
+      #app .intro-hint kbd{display:inline-grid;place-items:center;min-width:18px;height:18px;box-sizing:border-box;padding:0 4px;margin:0 0 0 5px;border:1px solid rgba(255,240,228,.55);border-radius:4px;font:inherit;font-size:10.5px;letter-spacing:0;vertical-align:-3px}
+      #app .intro-hint kbd+kbd{margin-left:4px}
+      @media (hover:none){#app .intro-hint .keys{display:none}}
     </style>
   </head>
   <body>
@@ -72,7 +77,8 @@
           <span class="label">PREPARING THE GARDEN</span><span class="arrow" aria-hidden="true">→</span>
         </button>
         <a id="intro-home" class="text-button home-button" href="../../index.html"><span class="arrow" aria-hidden="true">←</span><span class="label">RETURN TO HOME</span></a>
-        <p class="intro-hint">SCROLL TO EXPLORE <span>·</span> DRAG TO LOOK AROUND</p>
+        <!-- 2026-11-24: the S / W keys here too (S forward, W back) -->
+        <p class="intro-hint">SCROLL <b class="keys">/ <kbd title="forward">S</kbd><kbd title="back">W</kbd></b> TO EXPLORE <span>·</span> DRAG TO LOOK AROUND</p>
       </header>
 
       <nav id="journey-ui" class="journey-ui" aria-label="Journey controls">
