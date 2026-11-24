@@ -34,6 +34,10 @@
       /* 2026-11-24: MAIN pill top left, level with FOR BW/S; the intro's eyebrow line is removed */
       .main-pill-fixed{position:fixed;z-index:20;top:22px;left:clamp(24px,6vw,96px)}
       #intro-ui .eyebrow{display:none}
+      /* 2026-11-24: once in the garden (any state but the intro), MAIN turns translucent like FOR BW/S */
+      .main-pill-fixed{transition:background-color .6s ease,border-color .6s ease,box-shadow .6s ease,color .25s}
+      #app:not([data-state=INTRO]) .main-pill-fixed{background:rgba(20,14,12,.28);border-color:rgba(244,237,227,.55);box-shadow:none}
+      #app:not([data-state=INTRO]) .main-pill-fixed:hover,#app:not([data-state=INTRO]) .main-pill-fixed:focus-visible{background:#f4ede3;color:#141110}
       #app #intro-ui{top:max(92px,clamp(32px,7vw,96px))}
       /* 2026-11-24: intro text 15 % larger: A Journey in Bloom, START JOURNEY, RETURN TO HOME, the scroll / drag hint */
       #app #intro-ui .subtitle{font-size:clamp(23px,2.415vw,34.5px)}
